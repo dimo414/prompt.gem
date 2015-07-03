@@ -103,6 +103,9 @@ _format_seconds()
 # http://stackoverflow.com/a/1862762/113632
 _time_command()
 {
+  # Ignore while tab-completing, or running _prompt_command
+  ([ -n "$COMP_LINE" ] || [ -n "$BUILD_PROMPT" ]) && return
+ 
   _PROMPT_COMMAND_START=${_PROMPT_COMMAND_START:-$SECONDS}
 }
 
@@ -111,9 +114,11 @@ _prompt_command()
 {
   # capture the exit code first, since we'll overwrite it
   local exit_code=$?
-  
+  BUILD_PROMPT=true
+    
   # capture the execution time of the last command
   local runtime=$(($SECONDS - ${_PROMPT_COMMAND_START:-$SECONDS}))
+  unset _PROMPT_COMMAND_START
 
   local exit_color=$((( $exit_code == 0 )) && echo GREEN || echo RED)
   local exit_symbol=$((( $exit_code == 0 )) && echo ✔ || echo ✘)
@@ -134,8 +139,8 @@ _prompt_command()
   
   export PS1="\n${last_command} ${shell_env}\n${prompt}"
   
-  # Goes last so no other commands trigger the DEBUG trap
-  unset _PROMPT_COMMAND_START
+  # Done building prompt - make sure this line is last
+  unset BUILD_PROMPT
 }
 
 # Prints a table of bash colors and how they look
