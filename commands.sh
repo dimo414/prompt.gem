@@ -12,7 +12,7 @@
 trap '_time_command' DEBUG
 
 # Set window title
-tagtab
+tagsh
 
 if $_PGEM_DEBUG
 then

@@ -69,6 +69,15 @@ tagsh()
   echo -n -e "\033]0;${WINDOW_TITLE}${SHELL_TAG:+ - }${SHELL_TAG}\007"
 }
 
+# Tags the shell tab correctly upon exiting an SSH session
+ssh()
+{
+  $(which ssh) "$@"
+  local ret=$?
+  tagsh -
+  return $ret
+}
+
 # Given a number of seconds formats it as a human-readable string.
 _format_seconds()
 {
@@ -104,7 +113,7 @@ _prompt_command()
   local exit_code=$?
   
   # capture the execution time of the last command
-  local runtime=$(($SECONDS - $_PROMPT_COMMAND_START))
+  local runtime=$(($SECONDS - ${_PROMPT_COMMAND_START:-$SECONDS}))
   unset _PROMPT_COMMAND_START
 
   local exit_color=$((( $exit_code == 0 )) && echo GREEN || echo RED)
