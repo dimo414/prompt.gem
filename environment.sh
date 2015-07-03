@@ -5,5 +5,3 @@
 # 
 
 HISTCONTROL=ignoredups
-
-HIDE_PATHS+=('s`^'${HOME}'`~`')
