@@ -82,13 +82,7 @@ ssh()
 short_pwd() {
   [[ ${#HIDE_PATHS[@]} == 0 ]] && pwd && return
   
-  local scripts=''
-  local script
-  for script in "${HIDE_PATHS[@]}"
-  do
-    scripts="${scripts} -e ${script}"
-  done
-  pwd | sed $scripts
+  pwd | sed -f <(for script in "${HIDE_PATHS[@]}"; do echo "$script"; done)
 }
 
 # Given a number of seconds formats it as a human-readable string.
