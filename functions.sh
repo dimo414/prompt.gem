@@ -17,7 +17,8 @@
 # https://gist.github.com/XVilka/8346728
 color()
 {
-  color=$(echo $1 | tr '[:upper:]' '[:lower:]')
+  local color=$(echo $1 | tr '[:upper:]' '[:lower:]')
+  local code
   case ${color//;/,} in # case doesn't seem to match semicolons
     bold) code=1
       ;;
@@ -58,7 +59,7 @@ pcolor()
 # "Tags" this shell, updating the window title and prompt
 tagsh()
 {
-  if [ -n "$1" ]
+  if [ -n "$1" ] && [[ "$1" != '-' ]]
   then
     SHELL_TAG="$1"
   else
@@ -70,8 +71,8 @@ tagsh()
 # Given a number of seconds formats it as a human-readable string.
 _format_seconds()
 {
-  duration=$1
-  output="$((duration % 60))s"
+  local duration=$1
+  local output="$((duration % 60))s"
   ((duration /= 60))
   
   ((duration > 0)) && output="$((duration % 60))m $output"
@@ -99,28 +100,28 @@ _time_command()
 _prompt_command()
 {
   # capture the exit code first, since we'll overwrite it
-  exit_code=$?
+  local exit_code=$?
   
   # capture the execution time of the last command
-  runtime=$(($SECONDS - $_PROMPT_COMMAND_START))
+  local runtime=$(($SECONDS - $_PROMPT_COMMAND_START))
   unset _PROMPT_COMMAND_START
 
-  exit_color=$((( $exit_code == 0 )) && echo GREEN || echo RED)
-  exit_symbol=$((( $exit_code == 0 )) && echo ✔ || echo ✘)
+  local exit_color=$((( $exit_code == 0 )) && echo GREEN || echo RED)
+  local exit_symbol=$((( $exit_code == 0 )) && echo ✔ || echo ✘)
   
-  formatted_runtime="$((($runtime > 1)) && _format_seconds $runtime)"
-  formatted_runtime="${formatted_runtime:+$(pcolor yellow)$formatted_runtime$(pcolor) }"
-  exit_code_display="$(pcolor $exit_color)${exit_code}$(pcolor)"
-  last_command="[${formatted_runtime}${exit_code_display}]"
+  local formatted_runtime="$((($runtime > 1)) && _format_seconds $runtime)"
+  local formatted_runtime="${formatted_runtime:+$(pcolor yellow)$formatted_runtime$(pcolor) }"
+  local exit_code_display="$(pcolor $exit_color)${exit_code}$(pcolor)"
+  local last_command="[${formatted_runtime}${exit_code_display}]"
   
-  user_color=$([[ $EEUID == 0 ]] && echo RED BOLD || echo $HOST_COLOR)
-  machine="$(pcolor $user_color)\u$(pcolor)$(pcolor $HOST_COLOR)@\h$(pcolor)"
-  pwd="$(pcolor BLUE)\w$(pcolor)"
-  time_cmd="$(pcolor PURPLE)\$(date +%I:%M:%S%p)$(pcolor)"
-  shell_tag="${SHELL_TAG:+ $(color RED)${SHELL_TAG}$(color)}"
-  shell_env="[${machine}:${pwd} ${time_cmd}${shell_tag}]"
+  local user_color=$([[ $EEUID == 0 ]] && echo RED BOLD || echo $HOST_COLOR)
+  local machine="$(pcolor $user_color)\u$(pcolor)$(pcolor $HOST_COLOR)@\h$(pcolor)"
+  local pwd="$(pcolor BLUE)\w$(pcolor)"
+  local time_cmd="$(pcolor PURPLE)\$(date +%I:%M:%S%p)$(pcolor)"
+  local shell_tag="${SHELL_TAG:+ $(color RED)${SHELL_TAG}$(color)}"
+  local shell_env="[${machine}:${pwd} ${time_cmd}${shell_tag}]"
   
-  prompt='\$ '
+  local prompt='\$ '
   
   export PS1="\n${last_command} ${shell_env}\n${prompt}"
 }
@@ -129,7 +130,8 @@ _prompt_command()
 # From http://tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
 _color_table()
 {
-  T='gYw'   # The test text
+  local T='gYw'   # The test text
+  local FG; local BG
 
   echo -e "\n                 40m     41m     42m     43m\
      44m     45m     46m     47m";
