@@ -78,6 +78,19 @@ ssh()
   return $ret
 }
 
+# Shortens pwd to a more readable format
+short_pwd() {
+  [[ ${#HIDE_PATHS[@]} == 0 ]] && pwd && return
+  
+  local scripts=''
+  local script
+  for script in "${HIDE_PATHS[@]}"
+  do
+    scripts="${scripts} -e ${script}"
+  done
+  pwd | sed $scripts
+}
+
 # Given a number of seconds formats it as a human-readable string.
 _format_seconds()
 {
@@ -130,7 +143,7 @@ _prompt_command()
   
   local user_color=$([[ $EEUID == 0 ]] && echo RED BOLD || echo $HOST_COLOR)
   local machine="$(pcolor $user_color)\u$(pcolor)$(pcolor $HOST_COLOR)@\h$(pcolor)"
-  local pwd="$(pcolor BLUE)\w$(pcolor)"
+  local pwd="$(pcolor BLUE)$(short_pwd)$(pcolor)"
   
   local env_info=' '
   local env_cmd

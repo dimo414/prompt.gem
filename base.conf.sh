@@ -13,5 +13,5 @@ HOST_COLOR=NONE
 WINDOW_TITLE=$(hostname | tr '[:lower:]' '[:upper:]')
 SHELL_TAG=''
 
-HIDE_DIRS=()
+HIDE_PATHS=('s`^'${HOME}'`~`')
 ENV_INFO=()
