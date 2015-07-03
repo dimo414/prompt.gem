@@ -143,7 +143,8 @@ _prompt_command()
   local env_cmd
   for env_cmd in "${ENV_INFO[@]}"
   do
-    env_info="${env_info}$($env_cmd) "
+    cmd_result="$($env_cmd)"
+    env_info="${env_info}${cmd_result:+$cmd_result }"
   done
   
   local time_cmd="$(pcolor PURPLE)\$(date +%I:%M:%S%p)$(pcolor)"
