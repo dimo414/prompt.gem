@@ -114,7 +114,6 @@ _prompt_command()
   
   # capture the execution time of the last command
   local runtime=$(($SECONDS - ${_PROMPT_COMMAND_START:-$SECONDS}))
-  unset _PROMPT_COMMAND_START
 
   local exit_color=$((( $exit_code == 0 )) && echo GREEN || echo RED)
   local exit_symbol=$((( $exit_code == 0 )) && echo ✔ || echo ✘)
@@ -134,6 +133,9 @@ _prompt_command()
   local prompt='\$ '
   
   export PS1="\n${last_command} ${shell_env}\n${prompt}"
+  
+  # Goes last so no other commands trigger the DEBUG trap
+  unset _PROMPT_COMMAND_START
 }
 
 # Prints a table of bash colors and how they look
