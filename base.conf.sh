@@ -12,3 +12,6 @@
 HOST_COLOR=NONE
 WINDOW_TITLE=$(hostname | tr '[:lower:]' '[:upper:]')
 SHELL_TAG=''
+
+HIDE_DIRS=()
+ENV_INFO=()

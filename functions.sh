@@ -104,7 +104,7 @@ _format_seconds()
 _time_command()
 {
   # Ignore while tab-completing, or running _prompt_command
-  ([ -n "$COMP_LINE" ] || [ -n "$BUILD_PROMPT" ]) && return
+  ([ -n "$COMP_LINE" ] || [ -n "$_BUILD_PROMPT" ]) && return
  
   _PROMPT_COMMAND_START=${_PROMPT_COMMAND_START:-$SECONDS}
 }
@@ -114,7 +114,7 @@ _prompt_command()
 {
   # capture the exit code first, since we'll overwrite it
   local exit_code=$?
-  BUILD_PROMPT=true
+  _BUILD_PROMPT=true
     
   # capture the execution time of the last command
   local runtime=$(($SECONDS - ${_PROMPT_COMMAND_START:-$SECONDS}))
@@ -131,16 +131,24 @@ _prompt_command()
   local user_color=$([[ $EEUID == 0 ]] && echo RED BOLD || echo $HOST_COLOR)
   local machine="$(pcolor $user_color)\u$(pcolor)$(pcolor $HOST_COLOR)@\h$(pcolor)"
   local pwd="$(pcolor BLUE)\w$(pcolor)"
+  
+  local env_info=' '
+  local env_cmd
+  for env_cmd in "${ENV_INFO[@]}"
+  do
+    env_info="${env_info}$($env_cmd) "
+  done
+  
   local time_cmd="$(pcolor PURPLE)\$(date +%I:%M:%S%p)$(pcolor)"
   local shell_tag="${SHELL_TAG:+ $(color RED)${SHELL_TAG}$(color)}"
-  local shell_env="[${machine}:${pwd} ${time_cmd}${shell_tag}]"
+  local shell_env="[${machine}:${pwd}${env_info}${time_cmd}${shell_tag}]"
   
   local prompt='\$ '
   
   export PS1="\n${last_command} ${shell_env}\n${prompt}"
   
   # Done building prompt - make sure this line is last
-  unset BUILD_PROMPT
+  unset _BUILD_PROMPT
 }
 
 # Prints a table of bash colors and how they look
