@@ -8,3 +8,7 @@
 # like here, instead define values which environment.sh will then use
 # after the user's config file has been loaded.
 # 
+
+HOST_COLOR=NONE
+WINDOW_TITLE=$(hostname | tr '[:lower:]' '[:upper:]')
+SHELL_TAG=''
