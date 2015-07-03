@@ -62,7 +62,8 @@ tagsh()
   if [ -n "$1" ] && [[ "$1" != '-' ]]
   then
     SHELL_TAG="$1"
-  else
+  elif [ -z "$1" ]
+  then
     SHELL_TAG=''
   fi
   echo -n -e "\033]0;${WINDOW_TITLE}${SHELL_TAG:+ - }${SHELL_TAG}\007"
@@ -109,7 +110,7 @@ _prompt_command()
   local exit_color=$((( $exit_code == 0 )) && echo GREEN || echo RED)
   local exit_symbol=$((( $exit_code == 0 )) && echo ✔ || echo ✘)
   
-  local formatted_runtime="$((($runtime > 1)) && _format_seconds $runtime)"
+  local formatted_runtime="$((($runtime >= 5)) && _format_seconds $runtime)"
   local formatted_runtime="${formatted_runtime:+$(pcolor yellow)$formatted_runtime$(pcolor) }"
   local exit_code_display="$(pcolor $exit_color)${exit_code}$(pcolor)"
   local last_command="[${formatted_runtime}${exit_code_display}]"
