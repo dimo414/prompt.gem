@@ -56,13 +56,15 @@ pcolor()
   echo -n "\[$(color "$@")\]"
 }
 
-# "Tags" this shell, updating the window title and prompt
+# "Tags" this shell, updating the window title and prompt.
+# Using '-' as the tag restores the previous window title
+# after a different application (e.g. ssh) overwrites it.
 tagsh()
 {
-  if [ -n "$1" ] && [[ "$1" != '-' ]]
+  if [[ "$#" -ne "0" ]] && [[ "$@" != '-' ]]
   then
-    SHELL_TAG="$1"
-  elif [ -z "$1" ]
+    SHELL_TAG="$@"
+  elif [[ "$#" -eq "0" ]]
   then
     SHELL_TAG=''
   fi
