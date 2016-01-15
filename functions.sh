@@ -1,9 +1,11 @@
 #!/bin/bash
-# 
+#
 # Define bash functions here
-# 
+#
 # Loaded after environment.sh and aliases.sh
-# 
+#
+
+. env_functions.sh
 
 # Helper functions for color prompts
 # You can specify the eight base colors by name,
@@ -44,7 +46,7 @@ color()
       ;;
     *) code=0
   esac
-  
+
   echo -en "\033[${2:+1;}${code}m"
 }
 
@@ -124,34 +126,33 @@ _prompt_command()
   # capture the exit code first, since we'll overwrite it
   local exit_code=$?
   _BUILD_PROMPT=true
-    
+
   # capture the execution time of the last command
   local runtime=$(($SECONDS - ${_PROMPT_COMMAND_START:-$SECONDS}))
   unset _PROMPT_COMMAND_START
 
   local exit_color=$((( $exit_code == 0 )) && echo GREEN || echo RED)
   local exit_symbol=$((( $exit_code == 0 )) && echo ✔ || echo ✘)
-  
+
   local formatted_runtime="$((($runtime >= 5)) && _format_seconds $runtime)"
   local formatted_runtime="${formatted_runtime:+$(pcolor yellow)$formatted_runtime$(pcolor) }"
   local exit_code_display="$(pcolor $exit_color)${exit_code}$(pcolor)"
   local last_command="[${formatted_runtime}${exit_code_display}]"
-  
+
   local user_color=$([[ $EEUID == 0 ]] && echo RED BOLD || echo $HOST_COLOR)
   local machine="$(pcolor $user_color)\u$(pcolor)$(pcolor $HOST_COLOR)@\h$(pcolor)"
   local pwd="$(pcolor BLUE)$(short_pwd)$(pcolor)"
-  
-  local env_info=' '
+
+  local env_info=''
   local env_cmd
   for env_cmd in "${ENV_INFO[@]}"
   do
     cmd_result="$($env_cmd)"
-    env_info="${env_info}${cmd_result:+$cmd_result }"
+    env_info="${env_info}${cmd_result:+ $cmd_result}"
   done
-  
-  local time_cmd="$(pcolor PURPLE)\$(date +%I:%M:%S%p)$(pcolor)"
+
   local shell_tag="${SHELL_TAG:+ $(color RED)${SHELL_TAG}$(color)}"
-  local shell_env="[${machine}:${pwd}${env_info}${time_cmd}${shell_tag}]"
+  local shell_env="[${machine}:${pwd}${env_info}${shell_tag}]"
   
   local prompt='\$ '
   

@@ -4,4 +4,3 @@
 # PATH, or PS1 here.
 # 
 
-HISTCONTROL=ignoredups
