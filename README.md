@@ -1,5 +1,8 @@
 # Prompt.gem
 
+*See the [ProfileGem](https://bitbucket.org/dimo414/profilegem) project for installation
+instructions.*
+
 This gem configures your terminal prompt to a simple but extensible format that
 is easy to read and informative.
 
@@ -11,7 +14,7 @@ The prompt generally looks like so:
 e.g.
 
     [0] [user@hostname:~/ProfileGem/prompt.gem]
-    $
+    $ 
 
 ## Features
 
