@@ -5,6 +5,7 @@
 # Loaded after environment.sh and aliases.sh
 #
 
+# Include common functions users can add to ENV_INFO
 . env_functions.sh
 
 # Helper functions for color prompts

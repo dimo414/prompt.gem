@@ -10,7 +10,7 @@ time_prompt() {
   echo "$(pcolor PURPLE)\$(date +%I:%M:%S%p)$(pcolor)"
 }
 
-# Prints the current branch and state of a Mercurial repo
+# Prints the current branch, colored by status, of a Mercurial repo
 hg_prompt() {
   local repo
   repo=$(_find_repo .hg) || return 0
@@ -24,7 +24,40 @@ hg_prompt() {
     color=LRED
   elif [[ -n "$(hg stat --unknown)" ]]
   then
-    color=YELLOW
+    color=PURPLE
   fi
-  echo "$(color $color)$branch$(color)"
+  echo "$(pcolor $color)$branch$(pcolor)"
 }
+
+# Prints the current branch, colored by status, of a Git repo
+git_prompt() {
+  local repo
+  repo=$(_find_repo .git) || return 0
+  cd "$repo" # so Git doesn't have to do the same find we just did
+  local label
+  # http://stackoverflow.com/a/12142066/113632
+  label=$(git rev-parse --abbrev-ref HEAD 2> /dev/null) || return 0
+  if [[ "$label" == "HEAD" ]]
+  then
+    # http://stackoverflow.com/a/18660163/113632
+    label=$(git describe --tags --exact-match 2> /dev/null)
+  fi
+
+  local color
+  local status=$(git status --porcelain | cut -c1-2)
+  if [[ -z "$status" ]]
+  then
+    color=GREEN
+  elif echo "$status" | cut -c2 | grep -vq -e ' ' -e '?'
+  then
+    color=RED # unstaged
+  elif echo "$status" | cut -c1 | grep -vq -e ' ' -e '?'
+  then
+    color=YELLOW # staged
+  elif echo "$status" | grep -q '?'
+  then
+    color=PURPLE # untracked
+  fi
+  echo "$(pcolor $color)$label$(pcolor)"
+}
+
