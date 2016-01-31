@@ -48,8 +48,10 @@ your prompt. See `base.conf.sh` for all availible customizations.
 
 ## Warning
 
-This gem takes advantage of the Bash's `DEBUG` trap in order to record how long commands take,
-overriding any previous trap you may have installed. In most cases this is fine, but if other
-parts of your environment start behaving strangely you may need to disable this functionality.
+This gem takes advantage of
+[Bash's `DEBUG` trap](http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_12_02.html) in order to
+record how long commands take, overriding any previous trap you may have installed. In most cases
+this should cause no issues, but if other parts of your environment start behaving strangely you
+may need to disable this functionality because they expect *their* trap to be running.
 
 Set `CAPTURE_COMMAND_TIMES=false` in your `local.conf.sh` to do so.
