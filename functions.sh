@@ -106,6 +106,17 @@ short_pwd() {
   pwd | sed -f <(for script in "${HIDE_PATHS[@]}"; do echo "$script"; done)
 }
 
+# Given a directory name (like .hg or .git) look through the pwd for such a repo
+_find_repo() {
+  local dir=$(pwd)
+  while [[ "$dir" != "/" ]]
+  do
+    [[ -d "$dir/$1" ]] && echo "$dir" && return
+    dir="$(dirname "$dir")"
+  done
+  return 1
+}
+
 # Given a number of seconds formats it as a human-readable string.
 _format_seconds()
 {
