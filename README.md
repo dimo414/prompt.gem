@@ -23,6 +23,10 @@ e.g.
 * Tracks the duration of commands and displays the duration of long-running (>5s) commands.
 * Also updates the terminal's title, and provides the `tagsh` command to label the window.
 * Provides `color` and `pcolor` functions to easily colorize your prompt and commands.
+* Comes with several optional helper functions you can enable to add additional functionality
+  to your prompt, such as the status of your current Mercurial or Git repo. See
+  [`env_functions.sh`](https://bitbucket.org/dimo414/prompt.gem/src/tip/env_functions.sh)
+  for a full list.
 
 ## Customizations
 
@@ -36,10 +40,16 @@ your prompt. See `base.conf.sh` for all availible customizations.
   example if you're often working in `/home/username/workspace/importantproject` you could add the
   pattern `"s|^${HOME}/workspace/importantproject|IP|"` to shorten the `PWD` in your prompt to
   `IP/some/subdirectory`.
-* `ENV_INFO`: an array of commands to execute, whos output will be included in the prompt after the
-  `PWD`. This lets you display whatever extra information you might want in your prompt, without
-  fiddling with the prompt itself. Generally this will be functions defined in other gems and
-  added to `ENV_INFO` in their `environment.sh`.
+* `ENV_INFO`: an array of commands to execute, whose output will be included in the prompt after
+  the `PWD`. This lets you display whatever extra information you might want without fiddling with
+  the prompt itself. In addition to the functions provided in `env_functions.sh` Gems that
+  integrate with prompt.gem can provide their own functions and modify `ENV_INFO` directly,
+  or you can manually add commands in your `local.conf.sh`.
 
-  See the `env_functions.sh` file for some useful functions to add to this array out of the box.
+## Warning
 
+This gem takes advantage of the Bash's `DEBUG` trap in order to record how long commands take,
+overriding any previous trap you may have installed. In most cases this is fine, but if other
+parts of your environment start behaving strangely you may need to disable this functionality.
+
+Set `CAPTURE_COMMAND_TIMES=false` in your `local.conf.sh` to do so.

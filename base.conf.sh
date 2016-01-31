@@ -15,3 +15,5 @@ SHELL_TAG=''
 
 HIDE_PATHS=("s|^${HOME}|~|")
 ENV_INFO=()
+
+CAPTURE_COMMAND_TIMES=true

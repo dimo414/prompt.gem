@@ -9,7 +9,9 @@
 # Record command start times
 # TODO This overwrites the DEBUG trap, breaks hermetic environment
 # http://stackoverflow.com/q/16115144/113632 might help
-trap '_time_command' DEBUG
+# It also doesn't undo itself if CAPTURE_COMMAND_TIMES is turned
+# off and pgem_reload is called. That might be harder.
+$CAPTURE_COMMAND_TIMES && trap '_time_command' DEBUG
 
 # Set window title
 tagsh
