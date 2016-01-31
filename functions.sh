@@ -8,46 +8,63 @@
 . env_functions.sh
 
 # Helper functions for color prompts
-# You can specify the eight base colors by name,
-# 8-bit colors by decimal value, and (where available)
-# TrueColor 24-bit colors, as semicolon delimited decimals.
+# You can specify common colors by name (see case
+# statement below), 8-bit colors by decimal value,
+# and (where available) TrueColor 24-bit colors
+# as semicolon delimited decimals.
 #
-# If $2 has a value, sets the Bold parameter.
+# With no arguments, resets the color to default.
+#
+# The second argument can set formatting, such as bold,
+# dim, and invert. Use default as the color to just
+# apply formatting.
 #
 # http://tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
+# http://misc.flogisoft.com/bash/tip_colors_and_formatting
 # http://unix.stackexchange.com/a/124409/19157
 # https://gist.github.com/XVilka/8346728
 color()
 {
   local color=$(echo $1 | tr '[:upper:]' '[:lower:]')
+  local format=$(echo $2 | tr '[:upper:]' '[:lower:]')
   local code
   case ${color//;/,} in # case doesn't seem to match semicolons
-    bold) code=1
-      ;;
-    black) code=30
-      ;;
-    red) code=31
-      ;;
-    green) code=32
-      ;;
-    yellow) code=33
-      ;;
-    blue) code=34
-      ;;
-    purple) code=35
-      ;;
-    cyan) code=36
-      ;;
-    grey) code=37
-      ;;
+    black) code=30 ;;
+    dgrey) code=90 ;;
+    red) code=31 ;;
+    lred) code=91 ;;
+    green) code=32 ;;
+    lgreen) code=92 ;;
+    yellow) code=33 ;;
+    lyellow) code=93 ;;
+    blue) code=34 ;;
+    lblue) code=94 ;;
+    purple) code=35 ;;
+    lpurple) code=95 ;;
+    cyan) code=36 ;;
+    lcyan) code=96 ;;
+    grey|lgrey) code=37 ;;
+    white) code=97 ;;
+    d|default) code=39 ;;
     *[0-9],*) code="38;2;$color";
       ;;
     *[0-9]*) code="38;5;$color"
       ;;
-    *) code=0
+    '') code=0 # reset
+  esac
+  # TODO support multiple formattings, like BOLD UNDERLINE
+  case $format in
+    bold|bright) attr=1 ;;
+    dim) attr=2 ;;
+    italic) attr=3 ;; # unofficial
+    underline) attr=4 ;;
+    blink) attr=5 ;; # you monster
+    reverse) attr=7 ;;
+    hide|hidden) attr=8 ;;
+    strike) attr=9 ;; # unofficial
   esac
 
-  echo -en "\033[${2:+1;}${code}m"
+  echo -en "\033[${attr:+$attr;}${code}m"
 }
 
 # Wraps the color function in escaped square brackets,
@@ -141,7 +158,7 @@ _prompt_command()
 
   local user_color=$([[ $EEUID == 0 ]] && echo RED BOLD || echo $HOST_COLOR)
   local machine="$(pcolor $user_color)\u$(pcolor)$(pcolor $HOST_COLOR)@\h$(pcolor)"
-  local pwd="$(pcolor BLUE)$(short_pwd)$(pcolor)"
+  local pwd="$(pcolor LBLUE)$(short_pwd)$(pcolor)"
 
   local env_info=''
   local env_cmd
