@@ -26,9 +26,9 @@
 # https://gist.github.com/XVilka/8346728
 color()
 {
-  local color=$(echo $1 | tr '[:upper:]' '[:lower:]')
-  local format=$(echo $2 | tr '[:upper:]' '[:lower:]')
-  local code
+  local color format code attr
+  color=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+  format=$(echo "$2" | tr '[:upper:]' '[:lower:]')
   case ${color//;/,} in # case doesn't seem to match semicolons
     black) code=30 ;;
     dgrey) code=90 ;;
@@ -47,22 +47,23 @@ color()
     grey|lgrey) code=37 ;;
     white) code=97 ;;
     d|default) code=39 ;;
-    *[0-9],*) code="38;2;$color";
-      ;;
-    *[0-9]*) code="38;5;$color"
-      ;;
-    '') code=0 # reset
+    *[0-9],*) code="38;2;$color" ;;
+    *[0-9]*) code="38;5;$color" ;;
+    '') code=0 ;; # reset
+    *) echo "Invalid color $color" >&2 && return 1 ;;
   esac
   # TODO support multiple formattings, like BOLD UNDERLINE
   case $format in
     bold|bright) attr=1 ;;
     dim) attr=2 ;;
-    italic) attr=3 ;; # unofficial
+    italic) attr=3 ;; # limited support
     underline) attr=4 ;;
     blink) attr=5 ;; # you monster
     reverse) attr=7 ;;
     hide|hidden) attr=8 ;;
-    strike) attr=9 ;; # unofficial
+    strike) attr=9 ;; # limited support
+    '') : ;; # no formatting
+    *) echo "Invalid format $format" >&2 && return 1 ;;
   esac
 
   echo -en "\033[${attr:+$attr;}${code}m"
@@ -83,7 +84,7 @@ tagsh()
 {
   if [[ "$#" -ne "0" ]] && [[ "$@" != '-' ]]
   then
-    SHELL_TAG="$@"
+    SHELL_TAG="$*"
   elif [[ "$#" -eq "0" ]]
   then
     SHELL_TAG=''
@@ -111,7 +112,8 @@ short_pwd() {
 
 # Given a directory name (like .hg or .git) look through the pwd for such a repo
 _find_repo() {
-  local dir=$(pwd)
+  local dir
+  dir=$(pwd)
   while [[ "$dir" != "/" ]]
   do
     [[ -d "$dir/$1" ]] && echo "$dir" && return
@@ -135,7 +137,7 @@ _format_seconds()
   
   ((duration > 0)) && output="${duration}d $output"
   
-  echo $output
+  echo "$output"
 }
 
 # Records the time this method is called (relative to
@@ -152,6 +154,7 @@ _time_command()
 }
 
 # Generates and sets PS1 and the window title
+# shellcheck disable=SC2155
 _prompt_command()
 {
   # capture the exit code first, since we'll overwrite it
@@ -159,18 +162,19 @@ _prompt_command()
   _BUILD_PROMPT=true
 
   # capture the execution time of the last command
-  local runtime=$(($SECONDS - ${_PROMPT_COMMAND_START:-$SECONDS}))
+  local runtime=$((SECONDS - ${_PROMPT_COMMAND_START:-$SECONDS}))
   unset _PROMPT_COMMAND_START
 
-  local exit_color=$((( $exit_code == 0 )) && echo GREEN || echo RED)
-  local exit_symbol=$((( $exit_code == 0 )) && echo ✔ || echo ✘)
+  local exit_color=$( (( exit_code == 0 )) && echo GREEN || echo RED)
+  # shellcheck disable=SC2034
+  local exit_symbol=$( (( exit_code == 0 )) && echo ✔ || echo ✘)
 
-  local formatted_runtime="$((($runtime >= 5)) && _format_seconds $runtime)"
+  local formatted_runtime="$( ((runtime >= 5)) && _format_seconds $runtime)"
   local formatted_runtime="${formatted_runtime:+$(pcolor yellow)$formatted_runtime$(pcolor) }"
   local exit_code_display="$(pcolor $exit_color)${exit_code}$(pcolor)"
   local last_command="[${formatted_runtime}${exit_code_display}]"
 
-  local user_color=$([[ $EEUID == 0 ]] && echo RED BOLD || echo $HOST_COLOR)
+  local user_color=$( ((EUID == 0)) && echo LRED BOLD || echo "$HOST_COLOR")
   local machine="$(pcolor $user_color)\u$(pcolor)$(pcolor $HOST_COLOR)@\h$(pcolor)"
   local pwd="$(pcolor LBLUE)$(short_pwd)$(pcolor)"
 

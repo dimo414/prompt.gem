@@ -14,7 +14,7 @@ time_prompt() {
 hg_prompt() {
   local repo
   repo=$(_find_repo .hg) || return 0
-  cd "$repo" # so Mercurial doesn't have to do the same find we just did
+  cd "$repo" || return # so Mercurial doesn't have to do the same find we just did
   local branch
   branch=$(hg branch 2> /dev/null) || return 0
 
@@ -27,13 +27,14 @@ hg_prompt() {
     color=PURPLE
   fi
   echo "$(pcolor $color)$branch$(pcolor)"
+  cd - > /dev/null
 }
 
 # Prints the current branch, colored by status, of a Git repo
 git_prompt() {
   local repo
   repo=$(_find_repo .git) || return 0
-  cd "$repo" # so Git doesn't have to do the same find we just did
+  cd "$repo" || return # so Git doesn't have to do the same find we just did
   local label
   # http://stackoverflow.com/a/12142066/113632
   label=$(git rev-parse --abbrev-ref HEAD 2> /dev/null) || return 0
@@ -44,7 +45,8 @@ git_prompt() {
   fi
 
   local color
-  local status=$(git status --porcelain | cut -c1-2)
+  local status
+  status=$(git status --porcelain | cut -c1-2)
   if [[ -z "$status" ]]
   then
     color=GREEN
@@ -59,5 +61,6 @@ git_prompt() {
     color=PURPLE # untracked
   fi
   echo "$(pcolor $color)$label$(pcolor)"
+  cd - > /dev/null
 }
 
