@@ -28,7 +28,7 @@ hg_prompt() {
   fi
   echo "$(pcolor $color)$branch$(pcolor)"
   cd - > /dev/null
-}
+} && _cache hg_prompt PWD
 
 # Prints the current branch, colored by status, of a Git repo
 git_prompt() {

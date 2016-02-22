@@ -5,9 +5,6 @@
 # Loaded after environment.sh and aliases.sh
 #
 
-# Include common functions users can add to ENV_INFO
-. env_functions.sh
-
 # Helper functions for color prompts
 # You can specify common colors by name (see case
 # statement below), 8-bit colors by decimal value,
@@ -108,6 +105,68 @@ short_pwd() {
   [[ ${#HIDE_PATHS[@]} == 0 ]] && pwd && return
   
   pwd | sed -f <(for script in "${HIDE_PATHS[@]}"; do echo "$script"; done)
+}
+
+# Given a function, and optionally a list of environment variables,
+# Decorates the function with a short-term caching mechanism, useful
+# for improving the responsiveness of functions used in the prompt,
+# at the expense of slightly stale data.
+#
+# Suggested usage:
+#   expensive_func() {
+#     ...
+#   } && _cache expensive_func PWD
+#
+# This will avoid re-calling expensive_func with the same arguments and in the
+# same working directory too often.
+_cache() {
+  $ENABLE_CACHED_COMMANDS || return 0
+
+  mkdir -p "$CACHE_DIR"
+
+  func="${1:?"Must provide a function name to cache"}"
+  shift
+  copy_function "${func}" "_orig_${func}" || return
+  local env
+  for v in "$@"
+  do
+    env="$env:\$$v"
+  done
+  eval "$(cat <<EOF
+    _cache_$func() {
+      : "\${cachepath:?"Must provide a cachepath to link to as an environment variable"}"
+      mkdir -p "\$CACHE_DIR"
+      local cmddir=\$(mktemp -d -p "\$CACHE_DIR")
+      _orig_$func "\$@" > "\$cmddir/out" 2> "\$cmddir/err"; echo \$? > "\$cmddir/exit"
+      ln -sfn "\$cmddir" "\$cachepath" # atomic
+    }
+EOF
+  )"
+  eval "$(cat <<EOF
+    $func() {
+      \$ENABLE_CACHED_COMMANDS || { _orig_$func "\$@"; return; }
+      # Clean up stale caches in the background
+      (find "\$CACHE_DIR" -not -path "\$CACHE_DIR" -not -newermt '-1 minute' -delete &)
+
+      local arghash=\$(echo "\${*}$env" | md5sum | tr -cd '0-9a-fA-F')
+      local cachepath=\$CACHE_DIR/\$arghash
+
+      if [[ ! -f "\$cachepath/exit" ]]
+      then
+        # No cache, execute in foreground
+        _cache_$func "\$@"
+      elif [[ "\$(find "\$cachepath/exit" -newermt '-10 seconds')" == "" ]]
+      then
+        # Cache exists but is old, refresh in background
+        ( _cache_$func "\$@" & )
+      fi
+      # Output cached result, less than 10 seconds old
+      cat "\$cachepath/out"
+      cat "\$cachepath/err" >&2
+      return "\$(cat "\$cachepath/exit")"
+    }
+EOF
+  )"
 }
 
 # Given a directory name (like .hg or .git) look through the pwd for such a repo
@@ -219,3 +278,7 @@ _color_table()
   done
   echo
 }
+
+
+# Include common functions users can add to ENV_INFO
+. env_functions.sh

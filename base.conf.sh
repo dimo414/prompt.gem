@@ -17,3 +17,6 @@ HIDE_PATHS=("s|^${HOME}|~|")
 ENV_INFO=()
 
 CAPTURE_COMMAND_TIMES=true
+
+ENABLE_CACHED_COMMANDS=true
+CACHE_DIR=/tmp/promt.gem.cache
