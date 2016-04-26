@@ -71,7 +71,9 @@ color()
 # bash the escape characters are non-printing.
 pcolor()
 {
-  printf '\001%s\002' "$(color "$@")"
+  # TODO \001...\002 doesn't appear to work on Ubuntu
+  #printf '\001%s\002' "$(color "$@")"
+  printf '\[%s\]' "$(color "$@")"
 }
 
 # "Tags" this shell, updating the window title and prompt.
