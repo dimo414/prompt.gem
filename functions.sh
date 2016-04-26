@@ -63,7 +63,7 @@ color()
     *) echo "Invalid format $format" >&2 && return 1 ;;
   esac
 
-  echo -en "\033[${attr:+$attr;}${code}m"
+  printf '\033[%s%sm' "${attr:+$attr;}" "${code}"
 }
 
 # Wraps the color function in escaped square brackets,
@@ -71,7 +71,7 @@ color()
 # bash the escape characters are non-printing.
 pcolor()
 {
-  echo -n "\[$(color "$@")\]"
+  printf '\001%s\002' "$(color "$@")"
 }
 
 # "Tags" this shell, updating the window title and prompt.
