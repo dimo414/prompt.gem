@@ -66,6 +66,11 @@ color()
   printf '\033[%s%sm' "${attr:+$attr;}" "${code}"
 }
 
+# Log-style functions with colored output
+note() { echo "$(color GREEN)NOTE:$(color)  $@"; }
+warn() { echo "$(color YELLOW)WARN:$(color)  $@"; }
+error() { echo "$(color RED)ERROR:$(color) $@"; }
+
 # Wraps the color function in escaped square brackets,
 # which is necessary in prompts (PS1, etc.) to tell
 # bash the escape characters are non-printing.
