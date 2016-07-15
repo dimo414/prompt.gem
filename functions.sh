@@ -158,20 +158,28 @@ EOF
       local arghash=\$(echo "\${*}$env" | md5sum | tr -cd '0-9a-fA-F')
       local cachepath=\$CACHE_DIR/\$arghash
 
-      if [[ ! -f "\$cachepath/exit" ]]
+      # Capture output once to avoid races
+      local out err exit
+      out=\$(cat "\$cachepath/out" 2>/dev/null)
+      err=\$(cat "\$cachepath/err" 2>/dev/null)
+      exit=\$(cat "\$cachepath/exit" 2>/dev/null)
+      if [[ "\$exit" == "" ]]
       then
         # No cache, execute in foreground
         _cache_$func "\$@"
-      elif [[ "\$(find "\$cachepath/exit" -newermt '-10 seconds')" == "" ]]
-      then
+        out=\$(cat "\$cachepath/out")
+        err=\$(cat "\$cachepath/err")
+        exit=\$(cat "\$cachepath/exit" || echo 255)
+      elif [[ "\$(find "\$CACHE_DIR" -path "\$cachepath/exit" -newermt '-10 seconds')" == "" ]]
+      then 
         # Cache exists but is old, refresh in background
         ( _cache_$func "\$@" & )
       fi
       # Output cached result, less than 10 seconds old
       # These files still disapear from time to time, so we silence errors
-      cat "\$cachepath/out" 2>/dev/null
-      cat "\$cachepath/err" >&2 2>/dev/null
-      return "\$(cat "\$cachepath/exit" 2>/dev/null || echo 255)"
+      echo "\$out"
+      echo "\$err" >&2
+      return "\$exit"
     }
 EOF
   )"
