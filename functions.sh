@@ -126,6 +126,12 @@ short_pwd() {
 #
 # This will avoid re-calling expensive_func with the same arguments and in the
 # same working directory too often.
+#
+# Reading/writing output to files is tricky, for a breakdown of the issues see
+# http://stackoverflow.com/a/22607352/113632
+#
+# It'd be nice to do something like write out,err,exit to a single file (e.g.
+# base64 encoded, newline separated), but uuencode isn't always installed.
 _cache() {
   $ENABLE_CACHED_COMMANDS || return 0
 
@@ -145,6 +151,9 @@ _cache() {
       mkdir -p "\$CACHE_DIR"
       local cmddir=\$(mktemp -d -p "\$CACHE_DIR")
       _orig_$func "\$@" > "\$cmddir/out" 2> "\$cmddir/err"; echo \$? > "\$cmddir/exit"
+      # Add end-of-output marker to preserve trailing newlines
+      printf "EOF" >> "\$cmddir/out"
+      printf "EOF" >> "\$cmddir/err"
       ln -sfn "\$cmddir" "\$cachepath" # atomic
     }
 EOF
@@ -158,7 +167,7 @@ EOF
       local arghash=\$(echo "\${*}$env" | md5sum | tr -cd '0-9a-fA-F')
       local cachepath=\$CACHE_DIR/\$arghash
 
-      # Capture output once to avoid races
+      # Read from cache - capture output once to avoid races
       local out err exit
       out=\$(cat "\$cachepath/out" 2>/dev/null)
       err=\$(cat "\$cachepath/err" 2>/dev/null)
@@ -169,17 +178,16 @@ EOF
         _cache_$func "\$@"
         out=\$(cat "\$cachepath/out")
         err=\$(cat "\$cachepath/err")
-        exit=\$(cat "\$cachepath/exit" || echo 255)
+        exit=\$(cat "\$cachepath/exit")
       elif [[ "\$(find "\$CACHE_DIR" -path "\$cachepath/exit" -newermt '-10 seconds')" == "" ]]
       then 
         # Cache exists but is old, refresh in background
         ( _cache_$func "\$@" & )
       fi
-      # Output cached result, less than 10 seconds old
-      # These files still disapear from time to time, so we silence errors
-      echo "\$out"
-      echo "\$err" >&2
-      return "\$exit"
+      # Output cached result
+      printf "%s" "\${out%EOF}"
+      printf "%s" "\${err%EOF}" >&2
+      return "\${exit:-255}"
     }
 EOF
   )"
