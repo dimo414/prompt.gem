@@ -134,7 +134,7 @@ _cache() {
   func="${1:?"Must provide a function name to cache"}"
   shift
   copy_function "${func}" "_orig_${func}" || return
-  local env
+  local env="$func:"
   for v in "$@"
   do
     env="$env:\$$v"
@@ -168,9 +168,10 @@ EOF
         ( _cache_$func "\$@" & )
       fi
       # Output cached result, less than 10 seconds old
-      cat "\$cachepath/out"
-      cat "\$cachepath/err" >&2
-      return "\$(cat "\$cachepath/exit")"
+      # These files still disapear from time to time, so we silence errors
+      cat "\$cachepath/out" 2>/dev/null
+      cat "\$cachepath/err" >&2 2>/dev/null
+      return "\$(cat "\$cachepath/exit" 2>/dev/null || echo 255)"
     }
 EOF
   )"
