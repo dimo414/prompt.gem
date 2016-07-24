@@ -231,7 +231,7 @@ _format_seconds()
 _time_command()
 {
   # Ignore while tab-completing, or running _prompt_command
-  ([ -n "$COMP_LINE" ] || [ -n "$_BUILD_PROMPT" ]) && return
+  ([[ -n "$COMP_LINE" ]] || [[ -n "$_BUILD_PROMPT" ]]) && return
  
   _PROMPT_COMMAND_START=${_PROMPT_COMMAND_START:-$SECONDS}
 }
@@ -248,16 +248,16 @@ _prompt_command()
   local runtime=$((SECONDS - ${_PROMPT_COMMAND_START:-$SECONDS}))
   unset _PROMPT_COMMAND_START
 
-  local exit_color=$( (( exit_code == 0 )) && echo GREEN || echo RED)
+  local exit_color=$( (( exit_code == 0 )) && echo "GREEN" || echo "RED")
   # shellcheck disable=SC2034
-  local exit_symbol=$( (( exit_code == 0 )) && echo ✔ || echo ✘)
+  local exit_symbol=$( (( exit_code == 0 )) && echo "✔" || echo "✘")
 
   local formatted_runtime="$( ((runtime >= 5)) && _format_seconds $runtime)"
   local formatted_runtime="${formatted_runtime:+$(pcolor yellow)$formatted_runtime$(pcolor) }"
   local exit_code_display="$(pcolor $exit_color)${exit_code}$(pcolor)"
   local last_command="[${formatted_runtime}${exit_code_display}]"
 
-  local user_color=$( ((EUID == 0)) && echo LRED BOLD || echo "$HOST_COLOR")
+  local user_color=$( ((EUID == 0)) && echo "LRED BOLD" || echo "$HOST_COLOR")
   local machine="$(pcolor $user_color)\u$(pcolor)$(pcolor $HOST_COLOR)@\h$(pcolor)"
   local pwd="$(pcolor LBLUE)$(short_pwd)$(pcolor)"
 
@@ -269,7 +269,7 @@ _prompt_command()
     env_info="${env_info}${cmd_result:+ $cmd_result}"
   done
 
-  local shell_tag="${SHELL_TAG:+ $(color RED)${SHELL_TAG}$(color)}"
+  local shell_tag="${SHELL_TAG:+ $(pcolor RED)${SHELL_TAG}$(pcolor)}"
   local shell_env="[${machine}:${pwd}${env_info}${shell_tag}]"
   
   local prompt='\$ '
