@@ -100,7 +100,8 @@ tagsh()
 ssh()
 {
   # intentionally using which to not match this function
-  # perhaps can use pgem_decorate instead?
+  # however this suppresses any ssh alias the user's defined
+  # perhaps we can use pgem_decorate instead?
   $(which ssh) "$@"
   local ret=$?
   tagsh -
