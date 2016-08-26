@@ -251,11 +251,24 @@ _prompt_command()
   local exit_color=$( (( exit_code == 0 )) && echo GREEN || echo RED)
   # shellcheck disable=SC2034
   local exit_symbol=$( (( exit_code == 0 )) && echo ✔ || echo ✘)
+  # calling history appears to update the history file as a side-effect
+  local last_command=$(HISTTIMEFORMAT='' history 1 | sed 's/ *[0-9]* *//')
+  local formatted_runtime=$(_format_seconds $runtime)
 
-  local formatted_runtime="$( ((runtime >= 5)) && _format_seconds $runtime)"
-  local formatted_runtime="${formatted_runtime:+$(pcolor yellow)$formatted_runtime$(pcolor) }"
+  for callback in "${COMMAND_FINISHED_CALLBACKS[@]}"
+  do
+    "$callback" "$last_command" "$exit_code" "$runtime" "$(_format_seconds $runtime)"
+  done
+
+  if ((runtime >= DISPLAY_COMMAND_TIME_THRESHOLD))
+  then
+    formatted_runtime="$(pcolor yellow)$formatted_runtime$(pcolor) "
+  else
+    formatted_runtime=''
+  fi
+
   local exit_code_display="$(pcolor $exit_color)${exit_code}$(pcolor)"
-  local last_command="[${formatted_runtime}${exit_code_display}]"
+  local last_command_info="[${formatted_runtime}${exit_code_display}]"
 
   local user_color=$( ((EUID == 0)) && echo LRED BOLD || echo "$HOST_COLOR")
   local machine="$(pcolor $user_color)\u$(pcolor)$(pcolor $HOST_COLOR)@\h$(pcolor)"
@@ -274,7 +287,7 @@ _prompt_command()
   
   local prompt='\$ '
   
-  export PS1="\n${last_command} ${shell_env}\n${prompt}"
+  export PS1="\n${last_command_info} ${shell_env}\n${prompt}"
   
   # Done building prompt - make sure this line is last
   unset _BUILD_PROMPT
@@ -306,3 +319,5 @@ _color_table()
 
 # Include common functions users can add to ENV_INFO
 . env_functions.sh
+# Include common functions users can add to COMMAND_FINISHED_CALLBACKS
+. callback_functions.sh
