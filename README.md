@@ -33,7 +33,8 @@ e.g.
 ## Customizations
 
 Set or update these values in your `local.conf.sh` or in other gems in order to further customize
-your prompt. See `base.conf.sh` for all availible customizations.
+your prompt. See [`base.conf.sh`](https://bitbucket.org/dimo414/prompt.gem/src/tip/base.conf.sh)
+for all availible customizations.
 
 * `HOST_COLOR`: sets the color of the `hostname`; useful for visually distinguishing different
   hosts you work with regularly.
@@ -51,11 +52,9 @@ your prompt. See `base.conf.sh` for all availible customizations.
   passed information about the previous command, including exit code and runtime. prompt. Gems
   that integrate with prompt.gem can provide their own functions and append to
   `COMMAND_FINISHED_CALLBACKS` directly, or you can manually add functions in your `local.conf.sh`.
-  See [`callback_functions.sh`]
-  (https://bitbucket.org/dimo414/prompt.gem/src/tip/callback_functions.sh) for callbacks bundled
-  with Prompt.gem you can enable immediately.
-
-
+  See
+  [`callback_functions.sh`](https://bitbucket.org/dimo414/prompt.gem/src/tip/callback_functions.sh)
+  for callbacks bundled with Prompt.gem you can enable immediately.
 
 ## Warning
 
