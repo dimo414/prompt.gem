@@ -27,6 +27,8 @@ e.g.
   to your prompt, such as the status of your current Mercurial or Git repo. See
   [`env_functions.sh`](https://bitbucket.org/dimo414/prompt.gem/src/tip/env_functions.sh)
   for a full list.
+* Also supports triggering callbacks when the prompt is rendered, enabling
+  out-of-band functionality (e.g. desktop notifications).
 
 ## Customizations
 
@@ -43,8 +45,17 @@ your prompt. See `base.conf.sh` for all availible customizations.
 * `ENV_INFO`: an array of commands to execute, whose output will be included in the prompt after
   the `PWD`. This lets you display whatever extra information you might want without fiddling with
   the prompt itself. In addition to the functions provided in `env_functions.sh` Gems that
-  integrate with prompt.gem can provide their own functions and modify `ENV_INFO` directly,
+  integrate with prompt.gem can provide their own functions and append to `ENV_INFO` directly,
   or you can manually add commands in your `local.conf.sh`.
+* `COMMAND_FINISHED_CALLBACKS`: an array of commands to be called during prompt  generation and
+  passed information about the previous command, including exit code and runtime. prompt. Gems
+  that integrate with prompt.gem can provide their own functions and append to
+  `COMMAND_FINISHED_CALLBACKS` directly, or you can manually add functions in your `local.conf.sh`.
+  See [`callback_functions.sh`]
+  (https://bitbucket.org/dimo414/prompt.gem/src/tip/callback_functions.sh) for callbacks bundled
+  with Prompt.gem you can enable immediately.
+
+
 
 ## Warning
 
