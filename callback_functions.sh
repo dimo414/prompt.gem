@@ -17,7 +17,7 @@ notify_desktop() {
   if (( $3 < DISPLAY_COMMAND_FINISHED_DIALOG )); then return; fi
   # Don't report certain (e.g. interactive) commands
   # TODO make this extensible
-  if [[ "$1" =~ (vi|vim|ssh)\ .* ]]; then return; fi
+  if [[ "$1" =~ (less|ssh|vi|vim)\ .* ]]; then return; fi
 
   if (( $2 == 0 ))
   then
