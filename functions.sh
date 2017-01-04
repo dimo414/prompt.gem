@@ -46,8 +46,8 @@ color()
     d|default) code=39 ;;
     *[0-9],*) code="38;2;$color" ;;
     *[0-9]*) code="38;5;$color" ;;
-    '') code=0 ;; # reset
-    *) echo "Invalid color $color" >&2 && return 1 ;;
+    ''|none) code=0 ;; # reset
+    *) echo "Invalid color $1" >&2 && return 1 ;;
   esac
   # TODO support multiple formattings, like BOLD UNDERLINE
   case $format in
@@ -60,7 +60,7 @@ color()
     hide|hidden) attr=8 ;;
     strike) attr=9 ;; # limited support
     '') : ;; # no formatting
-    *) echo "Invalid format $format" >&2 && return 1 ;;
+    *) echo "Invalid format $2" >&2 && return 1 ;;
   esac
 
   printf '\033[%s%sm' "${attr:+$attr;}" "${code}"
