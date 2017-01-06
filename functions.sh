@@ -82,18 +82,12 @@ pcolor()
 }
 
 # "Tags" this shell, updating the window title and prompt.
-# Using '-' as the tag restores the previous window title
-# after a different application (e.g. ssh) overwrites it.
+# Tag is stored in _SHELL_TAG so the tag can be restored
+# after other different applications (e.g. ssh) overwrites it.
 tagsh()
 {
-  if [[ "$#" -ne "0" ]] && [[ "$@" != '-' ]]
-  then
-    SHELL_TAG="$*"
-  elif [[ "$#" -eq "0" ]]
-  then
-    SHELL_TAG=''
-  fi
-  echo -n -e "\033]0;${WINDOW_TITLE}${SHELL_TAG:+ - }${SHELL_TAG}\007"
+  _SHELL_TAG="$*"
+  echo -n -e "\033]0;${WINDOW_TITLE}${_SHELL_TAG:+ - ${_SHELL_TAG}}\007"
 }
 
 # Tags the shell tab correctly upon exiting an SSH session
@@ -104,7 +98,7 @@ ssh()
   # perhaps we can use pgem_decorate instead?
   $(which ssh) "$@"
   local ret=$?
-  tagsh -
+  tagsh "$_SHELL_TAG"
   return $ret
 }
 
@@ -283,7 +277,7 @@ _prompt_command()
     env_info="${env_info}${cmd_result:+ $cmd_result}"
   done
 
-  local shell_tag="${SHELL_TAG:+ $(pcolor RED)${SHELL_TAG}$(pcolor)}"
+  local shell_tag="${_SHELL_TAG:+ $(pcolor RED)${_SHELL_TAG}$(pcolor)}"
   local shell_env="[${machine}:${pwd}${env_info}${shell_tag}]"
   
   local prompt='\$ '
