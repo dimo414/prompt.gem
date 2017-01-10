@@ -14,6 +14,8 @@
 # Triggers a desktop notification (Ubuntu-only for now) when long-running
 # commands finish.
 notify_desktop() {
+  # TODO don't invoke notify-send directly, in order to support other platforms
+  if ! command -v notify-send >/dev/null; then return; fi
   if (( $3 < DISPLAY_COMMAND_FINISHED_DIALOG )); then return; fi
   # Don't report certain (e.g. interactive) commands
   # TODO make this extensible
@@ -27,6 +29,6 @@ notify_desktop() {
     local icon='stock_dialog-error'
     local msg='Failed'
   fi
-
+  
   notify-send -i $icon "$msg after $4: $1"
 }
