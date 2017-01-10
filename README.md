@@ -1,5 +1,7 @@
 # Prompt.gem
 
+[![Build Status](https://drone.io/bitbucket.org/dimo414/prompt.gem/status.png)](https://drone.io/bitbucket.org/dimo414/prompt.gem/latest)
+
 *See the [ProfileGem](https://bitbucket.org/dimo414/profilegem) project for installation
 instructions.*
 
