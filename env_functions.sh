@@ -64,3 +64,9 @@ git_prompt() {
   cd - > /dev/null
 }
 
+# Prints the current screen session, if in one
+screen_prompt() {
+  if [[ -n "$STY" ]]; then
+    echo "$(pcolor CYAN)${STY#[0-9]*.}:${WINDOW}$(pcolor)"
+  fi
+}
