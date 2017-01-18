@@ -9,10 +9,9 @@ pipelines:
   default:
     - step:
         script:
-          - echo $BITBUCKET_CLONE_DIR
           - cd ..
           - hg clone https://bitbucket.org/dimo414/profilegem
-          - mv $BITBUCKET_CLONE_DIR profilegem
+          - mv $BITBUCKET_CLONE_DIR profilegem/prompt.gem
           - cd profilegem
-          - echo "#GEM $(basename $BITBUCKET_CLONE_DIR | sed 's/.gem//')" > local.conf.sh
+          - echo "#GEM prompt" > local.conf.sh
           - ./load.sh
