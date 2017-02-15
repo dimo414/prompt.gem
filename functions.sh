@@ -21,8 +21,7 @@
 # http://misc.flogisoft.com/bash/tip_colors_and_formatting
 # http://unix.stackexchange.com/a/124409/19157
 # https://gist.github.com/XVilka/8346728
-color()
-{
+color() {
   local color format code attr
   color=$(echo "$1" | tr '[:upper:]' '[:lower:]')
   format=$(echo "$2" | tr '[:upper:]' '[:lower:]')
@@ -66,33 +65,30 @@ color()
   printf '\033[%s%sm' "${attr:+$attr;}" "${code}"
 }
 
-# Log-style functions with colored output
-note() { echo "$(color GREEN)NOTE:$(color)  $@"; }
-warn() { echo "$(color YELLOW)WARN:$(color)  $@"; }
-error() { echo "$(color RED)ERROR:$(color) $@"; }
-
 # Wraps the color function in escaped square brackets,
 # which is necessary in prompts (PS1, etc.) to tell
 # bash the escape characters are non-printing.
-pcolor()
-{
+pcolor() {
   # TODO \001...\002 doesn't appear to work on Ubuntu
   #printf '\001%s\002' "$(color "$@")"
   printf '\[%s\]' "$(color "$@")"
 }
 
+# Log-style functions with colored output
+note() { echo "$(color GREEN)NOTE:$(color)  $*"; }
+warn() { echo "$(color YELLOW)WARN:$(color)  $*"; }
+error() { echo "$(color RED)ERROR:$(color) $*"; }
+
 # "Tags" this shell, updating the window title and prompt.
 # Tag is stored in _SHELL_TAG so the tag can be restored
 # after other different applications (e.g. ssh) overwrites it.
-tagsh()
-{
+tagsh() {
   _SHELL_TAG="$*"
   echo -n -e "\033]0;${WINDOW_TITLE}${_SHELL_TAG:+ - ${_SHELL_TAG}}\007"
 }
 
 # Tags the shell tab correctly upon exiting an SSH session
-ssh()
-{
+ssh() {
   # intentionally using which to not match this function
   # however this suppresses any ssh alias the user's defined
   # perhaps we can use pgem_decorate instead?
@@ -105,7 +101,7 @@ ssh()
 # Shortens pwd to a more readable format
 short_pwd() {
   [[ ${#HIDE_PATHS[@]} == 0 ]] && pwd && return
-  
+
   pwd | sed -f <(for script in "${HIDE_PATHS[@]}"; do echo "$script"; done)
 }
 
@@ -201,20 +197,19 @@ _find_repo() {
 }
 
 # Given a number of seconds formats it as a human-readable string.
-_format_seconds()
-{
+_format_seconds() {
   local duration=$1
   local output="$((duration % 60))s"
   ((duration /= 60))
-  
+
   ((duration > 0)) && output="$((duration % 60))m $output"
   ((duration /= 60))
-  
+
   ((duration > 0)) && output="$((duration % 24))h $output"
   ((duration /= 24))
-  
+
   ((duration > 0)) && output="${duration}d $output"
-  
+
   echo "$output"
 }
 
@@ -223,18 +218,16 @@ _format_seconds()
 # when a terminal command starts.
 # 
 # http://stackoverflow.com/a/1862762/113632
-_time_command()
-{
+_time_command() {
   # Ignore while tab-completing, or running _prompt_command
   ([[ -n "$COMP_LINE" ]] || [[ -n "$_BUILD_PROMPT" ]]) && return
- 
+
   _PROMPT_COMMAND_START=${_PROMPT_COMMAND_START:-$SECONDS}
 }
 
 # Generates and sets PS1 and the window title
 # shellcheck disable=SC2155
-_prompt_command()
-{
+_prompt_command() {
   # capture the exit code first, since we'll overwrite it
   local exit_code=$?
   _BUILD_PROMPT=true
@@ -279,19 +272,18 @@ _prompt_command()
 
   local shell_tag="${_SHELL_TAG:+ $(pcolor RED)${_SHELL_TAG}$(pcolor)}"
   local shell_env="[${machine}:${pwd}${env_info}${shell_tag}]"
-  
+
   local prompt='\$ '
-  
+
   export PS1="\n${last_command_info} ${shell_env}\n${prompt}"
-  
+
   # Done building prompt - make sure this line is last
   unset _BUILD_PROMPT
 }
 
 # Prints a table of bash colors and how they look
 # From http://tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
-_color_table()
-{
+_color_table() {
   local T='gYw'   # The test text
   local FG; local BG
 
