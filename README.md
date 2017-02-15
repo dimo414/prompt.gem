@@ -9,12 +9,11 @@ is easy to read and informative.
 The prompt generally looks like so:
 
     [LAST_EXIT_CODE] [USERNAME@HOST:PWD ADDITIONAL_INFO]
-    $ 
+    $
 
 e.g.
 
-    [0] [user@hostname:~/ProfileGem/prompt.gem]
-    $ 
+![Screenshot of basic prompt functionality](/example.png)
 
 ## Features
 
@@ -53,12 +52,33 @@ availible customizations.
 * `COMMAND_FINISHED_CALLBACKS`: an array of commands to be called during prompt generation and
   passed information about the previous command, including exit code and runtime.
 
-## Warning
+## Interoperability Warning
 
-This gem takes advantage of
+This gem overrides your `PS1` prompt along with the `PROMPT_COMMAND` function. This is by design
+and cannot be disabled. You can however register callbacks that are invoked by the `PROMPT_COMMAND`
+function by adding your function(s) to the `COMMAND_FINISHED_CALLBACKS` array.
+
+This gem also optionally takes advantage of
 [Bash's `DEBUG` trap](http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_12_02.html) in order to
 record how long commands take, overriding any previous trap you may have installed. In most cases
 this should cause no issues, but if other parts of your environment start behaving strangely you
 may need to disable this functionality because they expect *their* trap to be running.
 
 Set `CAPTURE_COMMAND_TIMES=false` in your `local.conf.sh` to do so.
+
+## Copyright and License
+
+Copyright 2015-2017 Michael Diamond
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
