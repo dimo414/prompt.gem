@@ -11,7 +11,7 @@ pipelines:
         script:
           - cd ..
           - hg clone https://bitbucket.org/dimo414/profilegem
-          - mv $BITBUCKET_CLONE_DIR profilegem/prompt.gem
+          - cp -R "$BITBUCKET_CLONE_DIR" profilegem/prompt.gem
           - cd profilegem
           - echo "#GEM prompt" > local.conf.sh
           - ./load.sh
