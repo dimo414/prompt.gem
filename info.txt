@@ -1,0 +1,19 @@
+Provides a powerful and extensible prompt.
+
+# Key Features
+
+* Displays abbreviations for commonly-used paths
+* Reports exit code and duration of previous command
+* Can trigger desktop notifications on long-running commands
+* Incorperates user-specified functions into prompt construction - see
+  env_functions.sh for examples
+
+# Customizations
+
+HOST_COLOR  set to a value like "green" to control the color of the hostname
+ENV_INFO    append function-names to this array to have them invoked during
+            prompt-construction and their output included in the prompt.
+COMMAND_FINISHED_CALLBACKS  append function-names to this array to be passed
+                            details of the prior command.
+
+See base.conf.sh for more configurations options.
