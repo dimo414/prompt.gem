@@ -1,19 +1,27 @@
 Provides a powerful and extensible prompt.
 
-# Key Features
-
-* Displays abbreviations for commonly-used paths
-* Reports exit code and duration of previous command
-* Can trigger desktop notifications on long-running commands
-* Incorperates user-specified functions into prompt construction - see
-  env_functions.sh for examples
-
 # Customizations
 
-HOST_COLOR  set to a value like "green" to control the color of the hostname
-ENV_INFO    append function-names to this array to have them invoked during
-            prompt-construction and their output included in the prompt.
-COMMAND_FINISHED_CALLBACKS  append function-names to this array to be passed
-                            details of the prior command.
+These variables can be updated in your local.conf.sh file, or by other gems.
+
+HOST_COLOR                  set to a value like "GREEN" to control the color of
+                            the username:hostname section, see the color
+                            function for all valid options
+HIDE_PATHS                  an array of sed expressions to apply to the PWD
+                            before including it in the prompt; generally used
+                            to hide or abbreviate common paths.
+ENV_INFO                    append function-names to this array to have them
+                            invoked during prompt-construction and their output
+                            included in the prompt. See env_functions.sh for
+                            built-in functions.
+COMMAND_FINISHED_CALLBACKS  append function-names to this array to be invoked
+                            after commands finish, e.g. to send a notification.
+                            See callback_functions.sh for built-in functions.
 
 See base.conf.sh for more configurations options.
+
+# Features
+
+tagsh [message]  allows you to "tag" a terminal session with a message, like a
+                 note describing the purpose of that session. Appears in the
+                 prompt and the terminal title.
