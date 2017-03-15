@@ -308,3 +308,19 @@ _color_table() {
 . env_functions.sh
 # Include common functions users can add to COMMAND_FINISHED_CALLBACKS
 . callback_functions.sh
+
+# Decorate ProfileGem functions with prompt.gem features
+# Don't try this at home!
+#   cache the _incomingRepo check so pgem_info can be faster
+_cache _incomingRepo PWD
+#   colorize pgem_err and pgem_log
+pgem_decorate pgem_err &&
+pgem_err() {
+  _orig_pgem_err "$(color RED BOLD)$*$(color)"
+}
+pgem_decorate pgem_log &&
+pgem_log() {
+  _orig_pgem_log "$(color PURPLE)$*$(color)"
+}
+
+
