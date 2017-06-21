@@ -219,9 +219,9 @@ _format_seconds() {
 # 
 # http://stackoverflow.com/a/1862762/113632
 _time_command() {
-  # Ignore while tab-completing, or running _prompt_command
-  ([[ -n "$COMP_LINE" ]] || [[ -n "$_BUILD_PROMPT" ]]) && return
-
+  # Ignore while tab-completing or running _prompt_command
+  [[ -n "$COMP_LINE" ]] && return
+  [[ -n "$_BUILD_PROMPT" ]] && return
   _PROMPT_COMMAND_START=${_PROMPT_COMMAND_START:-$SECONDS}
 }
 
