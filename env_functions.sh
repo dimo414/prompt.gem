@@ -1,13 +1,14 @@
 #!/bin/bash
 #
 # Useful functions to add to the ENV_INFO array to add functionality to your
-# prompt. E.g.:
+# prompt. For example adding the following to your local.conf.sh, or to another
+# gem's environment.sh will include your git project's status in the prompt:
 #
-#   ENV_INFO+=("time_prompt")
+#   ENV_INFO+=("git_prompt")
 
 # Prints the current time, in purple
 time_prompt() {
-  echo "$(pcolor PURPLE)\$(date +%I:%M:%S%p)$(pcolor)"
+  printf "$(pcolor PURPLE)%s$(pcolor)" "$(date +%I:%M:%S%p)"
 }
 
 # Prints the current branch, colored by status, of a Mercurial repo
@@ -26,7 +27,7 @@ hg_prompt() {
   then
     color=PURPLE
   fi
-  echo "$(pcolor $color)$branch$(pcolor)"
+  printf "$(pcolor $color)%s$(pcolor)" "$branch"
   cd - > /dev/null
 } && _cache hg_prompt PWD
 
@@ -60,13 +61,13 @@ git_prompt() {
   then
     color=PURPLE # untracked
   fi
-  echo "$(pcolor $color)$label$(pcolor)"
+  printf "$(pcolor $color)%s$(pcolor)" "$label"
   cd - > /dev/null
 }
 
 # Prints the current screen session, if in one
 screen_prompt() {
   if [[ -n "$STY" ]]; then
-    echo "$(pcolor CYAN)${STY#[0-9]*.}:${WINDOW}$(pcolor)"
+    printf "$(pcolor CYAN)%s$(pcolor)" "${STY#[0-9]*.}:${WINDOW}"
   fi
 }
