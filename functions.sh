@@ -26,26 +26,26 @@ color() {
   color=$(echo "$1" | tr '[:upper:]' '[:lower:]')
   format=$(echo "$2" | tr '[:upper:]' '[:lower:]')
   case ${color//;/,} in # case doesn't seem to match semicolons
-    black) code=30 ;;
-    dgrey) code=90 ;;
-    red) code=31 ;;
-    lred) code=91 ;;
-    green) code=32 ;;
-    lgreen) code=92 ;;
-    yellow) code=33 ;;
-    lyellow) code=93 ;;
-    blue) code=34 ;;
-    lblue) code=94 ;;
-    purple) code=35 ;;
-    lpurple) code=95 ;;
-    cyan) code=36 ;;
-    lcyan) code=96 ;;
+    black)      code=30 ;;
+    dgrey)      code=90 ;;
+    red)        code=31 ;;
+    lred)       code=91 ;;
+    green)      code=32 ;;
+    lgreen)     code=92 ;;
+    yellow)     code=33 ;;
+    lyellow)    code=93 ;;
+    blue)       code=34 ;;
+    lblue)      code=94 ;;
+    purple)     code=35 ;;
+    lpurple)    code=95 ;;
+    cyan)       code=36 ;;
+    lcyan)      code=96 ;;
     grey|lgrey) code=37 ;;
-    white) code=97 ;;
-    d|default) code=39 ;;
-    *[0-9],*) code="38;2;$color" ;;
-    *[0-9]*) code="38;5;$color" ;;
-    ''|none) code=0 ;; # reset
+    white)      code=97 ;;
+    d|default)  code=39 ;;
+    *[0-9],*)   code="38;2;$color" ;;
+    *[0-9]*)    code="38;5;$color" ;;
+    ''|none)    code=0 ;; # reset
     *) echo "Invalid color $1" >&2 && return 1 ;;
   esac
   # TODO support multiple formattings, like BOLD UNDERLINE
@@ -105,18 +105,20 @@ short_pwd() {
   pwd | sed -f <(for script in "${HIDE_PATHS[@]}"; do echo "$script"; done)
 }
 
-# Given a function, and optionally a list of environment variables,
-# Decorates the function with a short-term caching mechanism, useful
-# for improving the responsiveness of functions used in the prompt,
-# at the expense of slightly stale data.
+# Given a function - and optionally a list of environment variables - Decorates
+# the function with a short-term caching mechanism, useful for improving the
+# responsiveness of functions used in the prompt, at the expense of slightly
+# stale data.
 #
 # Suggested usage:
 #   expensive_func() {
 #     ...
 #   } && _cache expensive_func PWD
 #
-# This will avoid re-calling expensive_func with the same arguments and in the
-# same working directory too often.
+# This will replace expensive_func with a new fuction that caches the result
+# of calling expensive_func with the same arguments and in the same working
+# directory too often. The original expensive_func can still be called, if
+# necessary, as _orig_expensive_func.
 #
 # Reading/writing output to files is tricky, for a breakdown of the issues see
 # http://stackoverflow.com/a/22607352/113632
@@ -131,7 +133,7 @@ _cache() {
   func="${1:?"Must provide a function name to cache"}"
   shift
   copy_function "${func}" "_orig_${func}" || return
-  local env="$func:"
+  local env="${func}:"
   for v in "$@"
   do
     env="$env:\$$v"
@@ -155,7 +157,7 @@ EOF
       # Clean up stale caches in the background
       (find "\$CACHE_DIR" -not -path "\$CACHE_DIR" -not -newermt '-1 minute' -delete &)
 
-      local arghash=\$(echo "\${*}$env" | md5sum | tr -cd '0-9a-fA-F')
+      local arghash=\$(echo "\${*}::${env}" | md5sum | tr -cd '0-9a-fA-F')
       local cachepath=\$CACHE_DIR/\$arghash
 
       # Read from cache - capture output once to avoid races
@@ -163,15 +165,13 @@ EOF
       out=\$(cat "\$cachepath/out" 2>/dev/null)
       err=\$(cat "\$cachepath/err" 2>/dev/null)
       exit=\$(cat "\$cachepath/exit" 2>/dev/null)
-      if [[ "\$exit" == "" ]]
-      then
+      if [[ "\$exit" == "" ]]; then
         # No cache, execute in foreground
         _cache_$func "\$@"
         out=\$(cat "\$cachepath/out")
         err=\$(cat "\$cachepath/err")
         exit=\$(cat "\$cachepath/exit")
-      elif [[ "\$(find "\$CACHE_DIR" -path "\$cachepath/exit" -newermt '-10 seconds')" == "" ]]
-      then 
+      elif [[ "\$(find "\$CACHE_DIR" -path "\$cachepath/exit" -newermt '-10 seconds')" == "" ]]; then
         # Cache exists but is old, refresh in background
         ( _cache_$func "\$@" & )
       fi
