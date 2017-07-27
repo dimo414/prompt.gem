@@ -30,4 +30,4 @@ fi
 # we have to commandeer PROMPT_COMMAND, not just extend it,
 # since the exit code behavior has to be first, and the command
 # timing behavior has to be last.
-export PROMPT_COMMAND="_prompt_command"
+PROMPT_COMMAND="_prompt_command"

@@ -275,7 +275,7 @@ _prompt_command() {
 
   local prompt='\$ '
 
-  export PS1="\n${last_command_info} ${shell_env}\n${prompt}"
+  PS1="\n${last_command_info} ${shell_env}\n${prompt}"
 
   # Done building prompt - make sure this line is last
   unset _BUILD_PROMPT
