@@ -49,6 +49,7 @@ availible customizations.
 * `ENV_INFO`: an array of commands to execute, whose output will be included in the prompt after
   the `PWD`. This lets you display whatever extra information you might want without fiddling with
   the prompt itself.
+* `TITLE_INFO`: like `ENV_INFO`, an array of commands whose output will make up the window title.
 * `COMMAND_FINISHED_CALLBACKS`: an array of commands to be called during prompt generation and
   passed information about the previous command, including exit code and runtime.
 

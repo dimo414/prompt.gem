@@ -84,7 +84,12 @@ error() { echo "$(color RED)ERROR:$(color) $*"; }
 # after other different applications (e.g. ssh) overwrites it.
 tagsh() {
   _SHELL_TAG="$*"
-  echo -n -e "\033]0;${WINDOW_TITLE}${_SHELL_TAG:+ - ${_SHELL_TAG}}\007"
+  local title_info title_cmd cmd_result
+  for title_cmd in "${TITLE_INFO[@]}"; do
+    cmd_result="$($title_cmd)"
+    title_info="${title_info}${cmd_result:+ - $cmd_result}"
+  done
+  echo -n -e "\033]0;${title_info# - }${_SHELL_TAG:+ - ${_SHELL_TAG}}\007"
 }
 
 # Tags the shell tab correctly upon exiting an SSH session
@@ -236,6 +241,8 @@ _prompt_command() {
   local runtime=$((SECONDS - ${_PROMPT_COMMAND_START:-$SECONDS}))
   unset _PROMPT_COMMAND_START
 
+  tagsh "$_SHELL_TAG"
+
   local exit_color=$( (( exit_code == 0 )) && echo "GREEN" || echo "RED")
   # shellcheck disable=SC2034
   local exit_symbol=$( (( exit_code == 0 )) && echo "✔" || echo "✘")
@@ -262,8 +269,7 @@ _prompt_command() {
   local machine="$(pcolor $user_color)\u$(pcolor)$(pcolor $HOST_COLOR)@\h$(pcolor)"
   local pwd="$(pcolor LBLUE)$(short_pwd)$(pcolor)"
 
-  local env_info=''
-  local env_cmd
+  local env_info env_cmd cmd_result
   for env_cmd in "${ENV_INFO[@]}"
   do
     cmd_result="$($env_cmd)"
