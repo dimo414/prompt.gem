@@ -10,10 +10,9 @@
 # 
 
 HOST_COLOR=NONE
-WINDOW_TITLE=$(hostname | tr '[:lower:]' '[:upper:]')
-SHELL_TAG=''
 
 HIDE_PATHS=("s|^${HOME}|~|")
+TITLE_INFO=(hostname_title)
 ENV_INFO=()
 
 CAPTURE_COMMAND_TIMES=true

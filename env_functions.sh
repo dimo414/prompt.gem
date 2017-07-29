@@ -6,6 +6,11 @@
 #
 #   ENV_INFO+=("git_prompt")
 
+# Upper-case hostname, for title
+hostname_title() {
+  tr '[:lower:]' '[:upper:]' <<<"$HOSTNAME"
+}
+
 # Prints the current time, in purple
 time_prompt() {
   printf "$(pcolor PURPLE)%s$(pcolor)" "$(date +%I:%M:%S%p)"

@@ -13,9 +13,6 @@
 # off and pgem_reload is called. That might be harder.
 $CAPTURE_COMMAND_TIMES && trap '_time_command' DEBUG
 
-# Set window title
-tagsh
-
 if $_PGEM_DEBUG
 then
   # running _prompt_command directly has the added benefit
