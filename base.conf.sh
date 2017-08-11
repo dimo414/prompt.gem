@@ -11,16 +11,28 @@
 
 HOST_COLOR=NONE
 
-HIDE_PATHS=("s|^${HOME}|~|")
+# sed replacements of the PWD, generally to shorten it for commonly-used paths
+HIDE_PATHS=()
+[[ -n "$HOME" ]] && HIDE_PATHS+=("s|^${HOME}|~|")
+
+# Callback functions used to construct the window title
 TITLE_INFO=(hostname_title)
+# Callback functions used to construct the prompt
 ENV_INFO=()
-
-CAPTURE_COMMAND_TIMES=true
-DISPLAY_COMMAND_TIME_THRESHOLD=5
+# Callback functions invoked when a command has finished
 COMMAND_FINISHED_CALLBACKS=()
-
-ENABLE_CACHED_COMMANDS=true
-CACHE_DIR=/tmp/promt.gem.cache
 
 # Callback variables
 DISPLAY_COMMAND_FINISHED_DIALOG=30
+
+# Command execution times
+# Note this value is only used upon initially sourcing ProfileGem, not when running pgem_reload.
+CAPTURE_COMMAND_TIMES=true
+DISPLAY_COMMAND_TIME_THRESHOLD=5
+
+# Command caching
+ENABLE_CACHED_COMMANDS=true
+CACHE_DIR=/tmp/promt.gem.cache
+
+# Support bash-preexec
+COMPATIBLE_WITH_PREEXEC=true
