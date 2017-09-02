@@ -110,6 +110,13 @@ short_pwd() {
   pwd | sed -f <(for script in "${HIDE_PATHS[@]}"; do echo "$script"; done)
 }
 
+# Consistently-named md5 operation
+# http://stackoverflow.com/q/8996820/113632
+# If this still proves insufficient, it might be simpler to outsource to Python
+if ! command -v md5sum &> /dev/null && command -v md5 &> /dev/null; then
+  md5sum() { md5 "$@"; }
+fi
+
 # Given a function - and optionally a list of environment variables - Decorates
 # the function with a short-term caching mechanism, useful for improving the
 # responsiveness of functions used in the prompt, at the expense of slightly
