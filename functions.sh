@@ -198,11 +198,12 @@ EOF
 
 # Given a directory name (like .hg or .git) look through the pwd for such a repo
 _find_repo() {
-  local dir
+  local dir repoMarker
   dir=$(pwd)
+  repoMarker=${1:?Must specify the marker that indicates a repo}
   while [[ "$dir" != "/" ]]
   do
-    [[ -d "$dir/$1" ]] && echo "$dir" && return
+    [[ -e "$dir/$repoMarker" ]] && echo "$dir" && return
     dir="$(dirname "$dir")"
   done
   return 1
