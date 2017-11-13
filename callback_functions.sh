@@ -21,8 +21,7 @@ notify_desktop() {
   # TODO make this extensible
   if [[ "$1" =~ (less|ssh|vi|vim)\ .* ]]; then return; fi
 
-  if (( $2 == 0 ))
-  then
+  if (( $2 == 0 )); then
     local icon='stock_dialog-info'
     local msg='Finished'
   else
@@ -31,4 +30,22 @@ notify_desktop() {
   fi
   
   notify-send -i $icon "$msg after $4: $1"
+}
+
+# Enables a blink(1) device with the color of the exit-code of long-running
+# commands. The disable_blink1 function should also be added to ENV_INFO to
+# turn the device off again.
+notify_blink1() {
+  if ! command -v blink1-tool >/dev/null; then return; fi
+  # Turn off the blink(1) unconditionally, clearing previous commands
+  blink1-tool --quiet --off
+  if (( $3 < DISPLAY_COMMAND_FINISHED_DIALOG )); then return; fi
+  # Don't report certain (e.g. interactive) commands
+  if [[ "$1" =~ (less|ssh|vi|vim)\ .* ]]; then return; fi
+
+  local color=--green
+  if (( $2 != 0 )); then
+    color=--red
+  fi
+  blink1-tool --quiet "$color"
 }
