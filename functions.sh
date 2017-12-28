@@ -154,7 +154,7 @@ _cache() {
     _cache_$func() {
       : "\${cachepath:?"Must provide a cachepath to link to as an environment variable"}"
       mkdir -p "\$CACHE_DIR"
-      local cmddir=\$(mktemp -d -p "\$CACHE_DIR")
+      local cmddir=\$(mktemp -d "\$CACHE_DIR/XXXXXXXXXX")
       _orig_$func "\$@" > "\$cmddir/out" 2> "\$cmddir/err"; echo \$? > "\$cmddir/exit"
       # Add end-of-output marker to preserve trailing newlines
       printf "EOF" >> "\$cmddir/out"
