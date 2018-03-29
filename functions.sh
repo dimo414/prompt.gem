@@ -260,7 +260,9 @@ _prompt_command() {
 
   for callback in "${COMMAND_FINISHED_CALLBACKS[@]}"
   do
-    "$callback" "$last_command" "$exit_code" "$runtime" "$(_format_seconds $runtime)"
+    # Trigger callbacks asynchronously and in the background; these callbacks
+    # should block the next prompt from being rendered.
+    ("$callback" "$last_command" "$exit_code" "$runtime" "$(_format_seconds $runtime)" &)
   done
 
   if ((runtime >= DISPLAY_COMMAND_TIME_THRESHOLD))
