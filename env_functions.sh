@@ -21,8 +21,12 @@ hg_prompt() {
   local repo
   repo=$(_find_repo .hg) || return 0
   cd "$repo" || return # so Mercurial doesn't have to do the same find we just did
-  local branch
+  local branch num_heads heads
   branch=$(hg branch 2> /dev/null) || return 0
+  num_heads=$(hg heads --template '{rev} ' 2> /dev/null | wc -w) || return 0
+  if (( num_heads > 1 )); then
+    heads='*'
+  fi
 
   local color=GREEN
   if [[ -n "$(hg stat --modified --added --removed --deleted)" ]]; then
@@ -30,7 +34,7 @@ hg_prompt() {
   elif [[ -n "$(hg stat --unknown)" ]]; then
     color=PURPLE
   fi
-  printf "$(pcolor $color)%s$(pcolor)" "$branch"
+  printf "$(pcolor $color)%s%s$(pcolor)" "$branch" "$heads"
   cd - > /dev/null
 } && _cache hg_prompt PWD
 
