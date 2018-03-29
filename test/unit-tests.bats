@@ -2,13 +2,11 @@
 #
 # Unit tests for prompt.gem
 
-# pgem_log() { echo "PGEM_LOG" "$@"; }
-copy_function() { :; } # likely insufficient
+pgem_log() { echo "PGEM_LOG" "$@"; }
 pgem_decorate() { :; }
+bc::cache() { :; }
 
-# disable caching
-ENABLE_CACHED_COMMANDS=false
-source $BATS_TEST_DIRNAME/../functions.sh
+source "$BATS_TEST_DIRNAME/../functions.sh"
 
 expect_eq() {
   (( $# == 2 )) || { echo "Invalid inputs $*"; return 127; }
@@ -65,9 +63,6 @@ color_raw() { color "$@" | _raw; }
 
   expect_eq "$(short_pwd)" "F/BAR/baz"
 }
-
-# TODO add tests for _cache as part of
-# https://bitbucket.org/dimo414/prompt.gem/issues/5
 
 @test "_find_repo" {
    tmpdir=$(mktemp -d)

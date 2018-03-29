@@ -36,7 +36,7 @@ hg_prompt() {
   fi
   printf "$(pcolor $color)%s%s$(pcolor)" "$branch" "$heads"
   cd - > /dev/null
-} && _cache hg_prompt PWD
+} && bc::cache hg_prompt PWD
 
 # Prints the current branch, colored by status, of a Git repo
 git_prompt() {
@@ -65,7 +65,7 @@ git_prompt() {
   fi
   printf "$(pcolor $color)%s$(pcolor)" "$label"
   cd - > /dev/null
-} && _cache git_prompt PWD
+} && bc::cache git_prompt PWD
 
 # Prints the current screen session, if in one
 screen_prompt() {
