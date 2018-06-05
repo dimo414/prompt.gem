@@ -247,14 +247,3 @@ _color_table() {
 # Include common functions users can add to COMMAND_FINISHED_CALLBACKS
 . callback_functions.sh
 
-#   colorize pgem_err and pgem_log
-pgem_decorate pgem_err &&
-pgem_err() {
-  _orig_pgem_err "$(color RED BOLD)$*$(color)"
-}
-pgem_decorate pgem_log &&
-pgem_log() {
-  _orig_pgem_log "$(color PURPLE)$*$(color)"
-}
-
-
