@@ -16,7 +16,7 @@
 # It's also necessary to preserve this behavior during pgem_reload, which is the cause of most of
 # the complexity of this conditional.
 if $COMPATIBLE_WITH_PREEXEC && [[ -n "$__bp_imported" ]]; then
-  pgem_log "bash-preexec found; not updating PROMPT_COMMAND and DEBUG trap"
+  pg::log "bash-preexec found; not updating PROMPT_COMMAND and DEBUG trap"
   if [[ "$(type __bp_original_debug_trap 2>/dev/null)" != *" _time_command"* ]]; then
     for i in "${!preexec_functions[@]}"; do
       [[ "${preexec_functions[$i]}" == "_time_command" ]] && unset preexec_functions[$i]

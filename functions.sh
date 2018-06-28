@@ -96,7 +96,7 @@ tagsh() {
 ssh() {
   # intentionally using which to not match this function
   # however this suppresses any ssh alias the user's defined
-  # perhaps we can use pgem_decorate instead?
+  # perhaps we can use pg::decorate instead?
   $(which ssh) "$@"
   local ret=$?
   tagsh "$_SHELL_TAG"
@@ -114,14 +114,14 @@ short_pwd() {
 # Scheduled for removal in Aug 2018
 _cache() {
   $ENABLE_CACHED_COMMANDS || return 0
-  pgem_log "_cache is deprecated, please use bc::cache instead"
+  pg::log "_cache is deprecated, please use bc::cache instead"
   bc::cache "$@"
 }
 
 # Given a directory name (like .hg or .git) look through the pwd for such a repo
 _find_repo() {
   local dir repoMarker
-  dir=$(pwd)
+  dir=$PWD
   repoMarker=${1:?Must specify the marker that indicates a repo}
   while [[ "$dir" != "/" ]]
   do
@@ -184,12 +184,12 @@ _prompt_command() {
   do
     # Trigger callbacks asynchronously and in the background; these callbacks
     # should block the next prompt from being rendered.
-    ("$callback" "$last_command" "$exit_code" "$runtime" "$(_format_seconds $runtime)" &)
+    ("$callback" "$last_command" "$exit_code" "$runtime" "$formatted_runtime" &)
   done
 
   if ((runtime >= DISPLAY_COMMAND_TIME_THRESHOLD))
   then
-    formatted_runtime="$(pcolor yellow)$formatted_runtime$(pcolor) "
+    formatted_runtime="$(pcolor YELLOW)$formatted_runtime$(pcolor) "
   else
     formatted_runtime=''
   fi

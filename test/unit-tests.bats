@@ -2,8 +2,8 @@
 #
 # Unit tests for prompt.gem
 
-pgem_log() { echo "PGEM_LOG" "$@"; }
-pgem_decorate() { :; }
+pg::log() { echo "PGEM_LOG" "$@"; }
+pg::decorate() { :; }
 bc::cache() { :; }
 
 source "$BATS_TEST_DIRNAME/../functions.sh"
