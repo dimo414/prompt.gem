@@ -197,7 +197,7 @@ _prompt_command() {
   local exit_code_display="$(pcolor $exit_color)${exit_code}$(pcolor)"
   local last_command_info="[${formatted_runtime}${exit_code_display}]"
 
-  local user_color=$( ((EUID == 0)) && echo "LRED BOLD" || echo "$HOST_COLOR")
+  local user_color=$( ((EUID == 0)) && echo "LRED REVERSE" || echo "$HOST_COLOR")
   local machine="$(pcolor $user_color)\u$(pcolor)$(pcolor $HOST_COLOR)@\h$(pcolor)"
   local pwd="$(pcolor LBLUE)$(short_pwd)$(pcolor)"
 
