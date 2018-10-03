@@ -110,14 +110,6 @@ short_pwd() {
   pwd | sed -f <(for script in "${HIDE_PATHS[@]}"; do echo "$script"; done)
 }
 
-# Moved to bash-cache, provided by ProfileGem
-# Scheduled for removal in Aug 2018
-_cache() {
-  $ENABLE_CACHED_COMMANDS || return 0
-  pg::log "_cache is deprecated, please use bc::cache instead"
-  bc::cache "$@"
-}
-
 # Given a directory name (like .hg or .git) look through the pwd for such a repo
 _find_repo() {
   local dir repoMarker
