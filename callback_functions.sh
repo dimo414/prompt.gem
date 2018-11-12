@@ -21,12 +21,14 @@ notify_desktop() {
   # TODO make this extensible
   if [[ "$1" =~ (less|ssh|vi|vim)\ .* ]]; then return; fi
 
-  if (( $2 == 0 )); then
-    local icon='stock_dialog-info'
-    local msg='Finished'
-  else
-    local icon='stock_dialog-error'
-    local msg='Failed'
+  local icon='stock_dialog-info'
+  local msg='Finished'
+  if (( $2 > 127 && $2 < 192 )); then # signals, 1-64
+    icon='stock_dialog-warning'
+    msg='Terminated'
+  elif (( $2 != 0 )); then
+    icon='stock_dialog-error'
+    msg='Failed'
   fi
   
   notify-send -i $icon "$msg after $4: $1"
@@ -44,7 +46,9 @@ notify_blink1() {
   if [[ "$1" =~ (less|ssh|vi|vim)\ .* ]]; then return; fi
 
   local color=--green
-  if (( $2 != 0 )); then
+  if (( $2 > 127 && $2 < 192 )); then # signals, 1-64
+    color=--magenta
+  elif (( $2 != 0 )); then
     color=--red
   fi
   blink1-tool --quiet "$color"
