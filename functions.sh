@@ -169,7 +169,7 @@ _prompt_command() {
   # shellcheck disable=SC2034
   local exit_symbol=$( (( exit_code == 0 )) && echo "✔" || echo "✘")
   # calling history appears to update the history file as a side-effect
-  local last_command=$(HISTTIMEFORMAT='' history 1 | sed 's/ *[0-9]* *//')
+  local last_command=$(HISTTIMEFORMAT='' history 1 | sed '1 s/^ *[0-9]\+[* ] //')
   local formatted_runtime=$(_format_seconds $runtime)
 
   for callback in "${COMMAND_FINISHED_CALLBACKS[@]}"
