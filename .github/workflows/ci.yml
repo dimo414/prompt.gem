@@ -1,0 +1,20 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    container: dimo414/ci-profilegem
+    # TODO use a bash-version matrix like bash-cache
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Unit Tests
+      run: bats test
+    # TODO fix gem_test.sh to support Git repos
+    #- name: Gem Tests
+    #  run: /pgem_test/gem_test.sh https://github.com/dimo414/util.gem .
+
+# TODO shellcheck job
