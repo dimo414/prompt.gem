@@ -24,11 +24,11 @@ e.g.
 * Provides `color` and `pcolor` functions to easily colorize your prompt and commands.
 * Comes with several optional helper functions you can enable to add additional functionality
   to your prompt, such as the status of your current Mercurial or Git repo. See
-  [`env_functions.sh`](https://bitbucket.org/dimo414/prompt.gem/src/tip/env_functions.sh)
+  [`env_functions.sh`](https://github.com/dimo414/prompt.gem/blob/master/env_functions.sh)
   for a collection of functions bundled with this gem.
 * Also supports triggering callbacks when the prompt is rendered, enabling
   out-of-band functionality (e.g. desktop notifications). See
-  [`callback_functions.sh`](https://bitbucket.org/dimo414/prompt.gem/src/tip/callback_functions.sh)
+  [`callback_functions.sh`](https://github.com/dimo414/prompt.gem/blob/master/callback_functions.sh)
   for callbacks bundled with this gem you can enable immediately.
 
 ## Customizations
@@ -36,7 +36,7 @@ e.g.
 Set or update these values in your `local.conf.sh` in order to further customize your prompt. Gems
 that integrate with prompt.gem can also update these variables in their `environment.sh`.
 
-See [`base.conf.sh`](https://bitbucket.org/dimo414/prompt.gem/src/tip/base.conf.sh) for all
+See [`base.conf.sh`](https://github.com/dimo414/prompt.gem/blob/master/base.conf.sh) for all
 availible customizations.
 
 * `HOST_COLOR`: sets the color of the `hostname`; useful for visually distinguishing different
