@@ -107,7 +107,7 @@ ssh() {
 short_pwd() {
   [[ ${#HIDE_PATHS[@]} == 0 ]] && pwd && return
 
-  pwd | sed -f <(for script in "${HIDE_PATHS[@]}"; do echo "$script"; done)
+  sed -f <(IFS=$'\n'; echo "${HIDE_PATHS[*]}") <<<"$PWD"
 }
 
 # Given a directory name (like .hg or .git) look through the pwd for such a repo
