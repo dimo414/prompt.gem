@@ -1,6 +1,6 @@
 # Prompt.gem
 
-*See the [ProfileGem](https://bitbucket.org/dimo414/profilegem) project for installation
+*See the [ProfileGem](https://github.com/dimo414/ProfileGem) project for installation
 instructions.*
 
 This gem configures your terminal prompt to a simple but extensible format that
