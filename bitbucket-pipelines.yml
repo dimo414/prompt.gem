@@ -1,8 +1,0 @@
-image: dimo414/ci-profilegem
-
-pipelines:
-  default:
-    - step:
-        script:
-          - bats test
-          - /pgem_test/gem_test.sh https://bitbucket.org/dimo414/util.gem .
