@@ -58,10 +58,9 @@ color_raw() { color "$@" | _raw; }
 }
 
 @test "short_pwd" {
-  pwd() { echo /foo/bar/baz; }
   HIDE_PATHS=('s|^/foo|F|' 's|/bar/|/BAR/|')
 
-  expect_eq "$(short_pwd)" "F/BAR/baz"
+  expect_eq "$(PWD=/foo/bar/baz short_pwd)" "F/BAR/baz"
 }
 
 @test "_find_repo" {
