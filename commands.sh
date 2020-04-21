@@ -15,18 +15,19 @@
 #
 # It's also necessary to preserve this behavior during pgem_reload, which is the cause of most of
 # the complexity of this conditional.
+# shellcheck disable=SC2154
 if $COMPATIBLE_WITH_PREEXEC && [[ -n "$__bp_imported" ]]; then
   pg::log "bash-preexec found; not updating PROMPT_COMMAND and DEBUG trap"
   if [[ "$(type __bp_original_debug_trap 2>/dev/null)" != *" _time_command"* ]]; then
     for i in "${!preexec_functions[@]}"; do
-      [[ "${preexec_functions[$i]}" == "_time_command" ]] && unset preexec_functions[$i]
+      [[ "${preexec_functions[$i]}" == "_time_command" ]] && unset "preexec_functions[$i]"
     done
     $CAPTURE_COMMAND_TIMES && preexec_functions+=(_time_command)
   fi
 
   if [[ "$(type __bp_original_prompt_command 2>/dev/null)" != *" _prompt_command"* ]]; then
     for i in "${!precmd_functions[@]}"; do
-      [[ "${precmd_functions[$i]}" == "_prompt_command" ]] && unset precmd_functions[$i]
+      [[ "${precmd_functions[$i]}" == "_prompt_command" ]] && unset "precmd_functions[$i]"
     done
     precmd_functions=(_prompt_command "${precmd_functions[@]}")
   fi

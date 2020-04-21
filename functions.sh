@@ -85,6 +85,7 @@ error() { echo "$(color RED)ERROR:$(color) $*"; }
 tagsh() {
   _SHELL_TAG="$*"
   local title_info title_cmd cmd_result
+  # shellcheck disable=SC2153
   for title_cmd in "${TITLE_INFO[@]}"; do
     cmd_result="$($title_cmd)"
     title_info="${title_info}${cmd_result:+ - $cmd_result}"
@@ -186,14 +187,15 @@ _prompt_command() {
     formatted_runtime=''
   fi
 
-  local exit_code_display="$(pcolor $exit_color)${exit_code}$(pcolor)"
+  local exit_code_display="$(pcolor "$exit_color")${exit_code}$(pcolor)"
   local last_command_info="[${formatted_runtime}${exit_code_display}]"
 
   local user_color=$( ((EUID == 0)) && echo "LRED REVERSE" || echo "$HOST_COLOR")
-  local machine="$(pcolor $user_color)\u$(pcolor)$(pcolor $HOST_COLOR)@\h$(pcolor)"
+  local machine="$(pcolor "$user_color")\u$(pcolor)$(pcolor "$HOST_COLOR")@\h$(pcolor)"
   local pwd="$(pcolor LBLUE)$(short_pwd)$(pcolor)"
 
   local env_info env_cmd cmd_result
+  # shellcheck disable=SC2153
   for env_cmd in "${ENV_INFO[@]}"
   do
     cmd_result="$($env_cmd)"

@@ -16,4 +16,12 @@ jobs:
     - name: Gem Tests
       run: /pgem_test/gem_test.sh https://github.com/dimo414/util.gem .
 
-# TODO shellcheck job
+  ShellCheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: ShellCheck
+        uses: docker://koalaman/shellcheck-alpine
+        with:
+          entrypoint: sh
+          args: -c "find . -name '*.sh' -exec shellcheck --shell=bash --exclude=2034 {} +"
