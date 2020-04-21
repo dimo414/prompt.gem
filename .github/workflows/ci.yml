@@ -3,18 +3,19 @@ name: CI
 on: [push]
 
 jobs:
-  build:
-
+  Test:
     runs-on: ubuntu-latest
     container: dimo414/ci-profilegem
-    # TODO use a bash-version matrix like bash-cache
+    strategy:
+      matrix:
+        bash-version: [bash-5, bash-4, bash-3]
 
     steps:
     - uses: actions/checkout@v2
-    - name: Unit Tests
-      run: bats test
-    - name: Gem Tests
-      run: /pgem_test/gem_test.sh https://github.com/dimo414/util.gem .
+    - name: "Unit Tests - ${{ matrix.bash-version }}"
+      run: ${{ matrix.bash-version }} -c 'bats test'
+    - name: "Gem Tests - ${{ matrix.bash-version }}"
+      run: ${{ matrix.bash-version }} /pgem_test/gem_test.sh https://github.com/dimo414/util.gem .
 
   ShellCheck:
     runs-on: ubuntu-latest
