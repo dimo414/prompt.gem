@@ -36,7 +36,7 @@ else
   PROMPT_COMMAND="_prompt_command"
 fi
 
-if $_PGEM_DEBUG; then
+if ${_PGEM_DEBUG:-false}; then
   # running _prompt_command directly has the added benefit of setting PS1 before pgem_reload
   # compares environments; otherwise it would report that PS1 had been set to the value of
   # _PRE_PGEM_PS1
