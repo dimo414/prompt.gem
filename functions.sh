@@ -98,7 +98,7 @@ ssh() {
   # intentionally using which to not match this function
   # however this suppresses any ssh alias the user's defined
   # perhaps we can use pg::decorate instead?
-  $(which ssh) "$@"
+  $(command -v ssh >/dev/null) "$@"
   local ret=$?
   tagsh "$_SHELL_TAG"
   return $ret
