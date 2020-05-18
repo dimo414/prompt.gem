@@ -94,15 +94,14 @@ tagsh() {
 }
 
 # Tags the shell tab correctly upon exiting an SSH session
+if [[ "$(type -t ssh)" != "alias" ]]; then # don't create if user has an ssh alias
 ssh() {
-  # intentionally using which to not match this function
-  # however this suppresses any ssh alias the user's defined
-  # perhaps we can use pg::decorate instead?
-  $(command -v ssh >/dev/null) "$@"
+  command ssh "$@"
   local ret=$?
   tagsh "$_SHELL_TAG"
   return $ret
 }
+fi
 
 # Shortens pwd to a more readable format
 short_pwd() {
