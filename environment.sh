@@ -5,7 +5,7 @@
 #
 
 # Environment customizations for users of https://github.com/sharkdp/bat
-if command -v bat >/dev/null; then
+if type -P bat >/dev/null; then
   export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 fi
 
