@@ -9,4 +9,4 @@ if type -P bat >/dev/null; then
   export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 fi
 
-pg::require bat "Installation instructions: https://github.com/sharkdp/bat"
+pg::require bat 'Installation instructions: https://github.com/sharkdp/bat'

@@ -19,7 +19,7 @@ time_prompt() {
 # Prints the current branch, colored by status, of a Mercurial repo
 hg_prompt() {
   local repo
-  repo=$(_find_repo .hg) || return 0
+  repo=$(prompt::_find_repo .hg) || return 0
   cd "$repo" || return # so Mercurial doesn't have to do the same find we just did
   local branch num_heads heads
   branch=$(hg branch 2> /dev/null) || return 0
@@ -41,7 +41,7 @@ hg_prompt() {
 # Prints the current branch, colored by status, of a Git repo
 git_prompt() {
   local repo
-  repo=$(_find_repo .git) || return 0
+  repo=$(prompt::_find_repo .git) || return 0
   cd "$repo" || return # so Git doesn't have to do the same find we just did
   local label
   # http://stackoverflow.com/a/12142066/113632
@@ -56,11 +56,11 @@ git_prompt() {
   status=$(git status --porcelain | cut -c1-2)
   if [[ -z "$status" ]]; then
     color=GREEN
-  elif echo "$status" | cut -c2 | grep -vq -e ' ' -e '?'; then
+  elif cut -c2 <<<"$status" | grep -vq -e ' ' -e '?'; then
     color=RED # unstaged
-  elif echo "$status" | cut -c1 | grep -vq -e ' ' -e '?'; then
+  elif cut -c1 <<<"$status" | grep -vq -e ' ' -e '?'; then
     color=YELLOW # staged
-  elif echo "$status" | grep -q '?'; then
+  elif grep -q '?' <<<"$status"; then
     color=PURPLE # untracked
   fi
   printf "$(pcolor $color)%s$(pcolor)" "$label"

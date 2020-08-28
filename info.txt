@@ -14,6 +14,8 @@ ENV_INFO                    append function-names to this array to have them
                             invoked during prompt-construction and their output
                             included in the prompt. See env_functions.sh for
                             built-in functions.
+TITLE_INFO                  like `ENV_INFO`, an array of commands whose output
+                            will make up the window title.
 COMMAND_FINISHED_CALLBACKS  append function-names to this array to be invoked
                             after commands finish, e.g. to send a notification.
                             See callback_functions.sh for built-in functions.

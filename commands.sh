@@ -16,31 +16,31 @@
 # It's also necessary to preserve this behavior during pgem_reload, which is the cause of most of
 # the complexity of this conditional.
 # shellcheck disable=SC2154
-if $COMPATIBLE_WITH_PREEXEC && [[ -n "$__bp_imported" ]]; then
+if "$COMPATIBLE_WITH_PREEXEC" && [[ -n "$__bp_imported" ]]; then
   pg::log "bash-preexec found; not updating PROMPT_COMMAND and DEBUG trap"
   if [[ "$(type __bp_original_debug_trap 2>/dev/null)" != *" _time_command"* ]]; then
     for i in "${!preexec_functions[@]}"; do
-      [[ "${preexec_functions[$i]}" == "_time_command" ]] && unset "preexec_functions[$i]"
+      if [[ "${preexec_functions[$i]}" == "_time_command" ]]; then unset "preexec_functions[$i]"; fi
     done
-    $CAPTURE_COMMAND_TIMES && preexec_functions+=(_time_command)
+    if "$CAPTURE_COMMAND_TIMES"; then preexec_functions+=(_time_command); fi
   fi
 
   if [[ "$(type __bp_original_prompt_command 2>/dev/null)" != *" _prompt_command"* ]]; then
     for i in "${!precmd_functions[@]}"; do
-      [[ "${precmd_functions[$i]}" == "_prompt_command" ]] && unset "precmd_functions[$i]"
+      if [[ "${precmd_functions[$i]}" == "_prompt_command" ]]; then unset "precmd_functions[$i]"; fi
     done
     precmd_functions=(_prompt_command "${precmd_functions[@]}")
   fi
 else
   # Note this has no effect from pgem_reload, because functions can't overwrite external traps
-  $CAPTURE_COMMAND_TIMES && trap '_time_command' DEBUG
+  "$CAPTURE_COMMAND_TIMES" && trap '_time_command' DEBUG
   PROMPT_COMMAND="_prompt_command"
 fi
 
-if ${_PGEM_DEBUG:-false}; then
+if "${_PGEM_DEBUG:-false}"; then
   # running _prompt_command directly has the added benefit of setting PS1 before pgem_reload
   # compares environments; otherwise it would report that PS1 had been set to the value of
   # _PRE_PGEM_PS1
-  echo PROMPT_COMMAND took:
+  echo "PROMPT_COMMAND took:"
   time _prompt_command
 fi

@@ -31,7 +31,7 @@ notify_desktop() {
     msg='Failed'
   fi
   
-  notify-send -i $icon "$msg after $4: $1"
+  notify-send -i "$icon" "${msg} after ${4}: ${1}"
 }
 
 # Enables a blink(1) device with the color of the exit-code of long-running

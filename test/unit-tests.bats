@@ -60,7 +60,7 @@ color_raw() { color "$@" | _raw; }
 @test "short_pwd" {
   HIDE_PATHS=('s|^/foo|F|' 's|/bar/|/BAR/|')
 
-  expect_eq "$(PWD=/foo/bar/baz short_pwd)" "F/BAR/baz"
+  expect_eq "$(PWD=/foo/bar/baz prompt::short_pwd)" "F/BAR/baz"
 }
 
 @test "_find_repo" {
@@ -69,23 +69,23 @@ color_raw() { color "$@" | _raw; }
    mkdir "$tmpdir/foo/marker"
 
    cd "$tmpdir/foo"
-   expect_eq "$(_find_repo marker)" "$tmpdir/foo"
+   expect_eq "$(prompt::_find_repo marker)" "$tmpdir/foo"
    cd "$tmpdir/foo/bar/baz"
-   expect_eq "$(_find_repo marker)" "$tmpdir/foo"
+   expect_eq "$(prompt::_find_repo marker)" "$tmpdir/foo"
    cd "$tmpdir"
-   expect_eq "$(_find_repo marker)" ""
-   ! _find_repo marker
+   expect_eq "$(prompt::_find_repo marker)" ""
+   ! prompt::_find_repo marker
 
    mkdir "$tmpdir/marker"
    cd "$tmpdir/foo/bar/baz"
-   expect_eq "$(_find_repo marker)" "$tmpdir/foo"
+   expect_eq "$(prompt::_find_repo marker)" "$tmpdir/foo"
 }
 
 @test "_format_seconds" {
-  expect_eq "$(_format_seconds 10)" "10s"
-  expect_eq "$(_format_seconds 100)" "1m 40s"
-  expect_eq "$(_format_seconds 10000)" "2h 46m 40s"
-  expect_eq "$(_format_seconds 100000)" "1d 3h 46m 40s"
+  expect_eq "$(prompt::_format_seconds 10)" "10s"
+  expect_eq "$(prompt::_format_seconds 100)" "1m 40s"
+  expect_eq "$(prompt::_format_seconds 10000)" "2h 46m 40s"
+  expect_eq "$(prompt::_format_seconds 100000)" "1d 3h 46m 40s"
 }
 
 # TODO add _prompt_command tests, possibly in a separate file

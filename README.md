@@ -37,7 +37,7 @@ Set or update these values in your `local.conf.sh` in order to further customize
 that integrate with prompt.gem can also update these variables in their `environment.sh`.
 
 See [`base.conf.sh`](https://github.com/dimo414/prompt.gem/blob/master/base.conf.sh) for all
-availible customizations.
+available customizations.
 
 * `HOST_COLOR`: sets the color of the `hostname`; useful for visually distinguishing different
   hosts you work with regularly.
