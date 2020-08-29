@@ -53,3 +53,16 @@ notify_blink1() {
   fi
   blink1-tool --quiet "$color"
 }
+
+# Invokes bc::warm::[func] on any functions added to TITLE_INFO or ENV_INFO that
+# are cached with bash-cache. Adding this to your COMMAND_FINISHED_CALLBACKS *may*
+# improve prompt responsiveness by concurrently warming cached functions, at the
+# cost of additional background processes.
+prompt::warm_bc() {
+  local func
+  for func in "${TITLE_INFO[@]}" "${ENV_INFO[@]}"; do
+    if declare -F "bc::warm::${func}" &> /dev/null; then
+      "bc::warm::${func}"
+    fi
+  done
+}
