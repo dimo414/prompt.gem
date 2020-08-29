@@ -13,7 +13,7 @@ hostname_title() {
 
 # Prints the current time, in purple
 time_prompt() {
-  printf "$(pcolor PURPLE)%s$(pcolor)" "$(date +%I:%M:%S%p)"
+  pg::print -p PURPLE "$(date +%I:%M:%S%p)"
 }
 
 # Prints the current branch, colored by status, of a Mercurial repo
@@ -34,7 +34,7 @@ hg_prompt() {
   elif [[ -n "$(hg stat --unknown)" ]]; then
     color=PURPLE
   fi
-  printf "$(pcolor $color)%s%s$(pcolor)" "$branch" "$heads"
+  pg::print -p "$color" "${branch}${heads}"
   cd - > /dev/null
 } && bc::cache hg_prompt PWD
 
@@ -63,13 +63,13 @@ git_prompt() {
   elif grep -q '?' <<<"$status"; then
     color=PURPLE # untracked
   fi
-  printf "$(pcolor $color)%s$(pcolor)" "$label"
+  pg::print -p "$color" "$label"
   cd - > /dev/null
 } && bc::cache git_prompt PWD
 
 # Prints the current screen session, if in one
 screen_prompt() {
   if [[ -n "$STY" ]]; then
-    printf "$(pcolor CYAN)%s$(pcolor)" "${STY#[0-9]*.}:${WINDOW}"
+    pg::print -p CYAN "${STY#[0-9]*.}:${WINDOW}"
   fi
 }

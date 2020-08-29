@@ -1,7 +1,8 @@
 #!/usr/bin/env bats
 #
 # Unit tests for prompt.gem
-
+pg::style() { if [[ "$1" == -p ]]; then local p=p; shift; fi; local var=${2:-_pg_style}; printf -v "$var" "[${p}%s]" "$1"; }
+pg::print() { if [[ "$1" == -p ]]; then local p=p; shift; fi; printf "[${p}%s]%s" "$@"; echo "[${p}OFF]"; }
 pg::log() { echo "PGEM_LOG" "$@"; }
 pg::decorate() { :; }
 bc::cache() { :; }
@@ -11,50 +12,44 @@ source "$BATS_TEST_DIRNAME/../functions.sh"
 expect_eq() {
   (( $# == 2 )) || { echo "Invalid inputs $*"; return 127; }
   if [[ "$1" != "$2" ]]; then
-    echo "Actual:   '$1'"
-    echo "Expected: '$2'"
+    printf "Actual:   '%s'\nExpected: '%s'\n" "${1//$'\e'/\\e}" "${2//$'\e'/\\e}"
     return 1
   fi
 }
 
-_raw() { sed -e 's/\o33/\\033/g' -e 's/\o07/\\007/g'; }
-color_raw() { color "$@" | _raw; }
-
 @test "named colors" {
-  expect_eq "$(color_raw red)foo$(color_raw)" "\033[31mfoo\033[0m"
-  expect_eq "$(color_raw green)foo$(color_raw cyan)bar$(color_raw none)" "\033[32mfoo\033[36mbar\033[0m"
+  expect_eq "$(color red)foo$(color)" '[RED]foo[OFF]'
+  expect_eq "$(color green)foo$(color cyan)bar$(color none)" '[GREEN]foo[CYAN]bar[NONE]'
 }
 
 @test "numbered colors" {
-  expect_eq "$(color_raw 202)foo" "\033[38;5;202mfoo"
-  expect_eq "$(color_raw '255;150;00')foo" "\033[38;2;255;150;00mfoo"
+  expect_eq "$(color 202)foo" '[202]foo'
+  expect_eq "$(color '255;150;00')foo" '[255;150;00]foo'
 }
 
 @test "styles" {
-  expect_eq "$(color_raw red blink)foo" "\033[5;31mfoo"
+  expect_eq "$(color red blink)foo" '[RED:BLINK]foo'
 }
 
 @test "pcolor" {
-  pcolor_raw() { pcolor "$@" | _raw; }
-  expect_eq "$(pcolor_raw yellow)foo$(pcolor_raw)" "\[\033[33m\]foo\[\033[0m\]"
+  expect_eq "$(pcolor yellow)foo$(pcolor)" '\[[YELLOW]\]foo\[[OFF]\]'
 }
 
 @test "logging utils" {
-  expect_eq "$(note foo | _raw)" "\033[32mNOTE:\033[0m  foo"
-  expect_eq "$(warn foo | _raw)" "\033[33mWARN:\033[0m  foo"
-  expect_eq "$(error foo | _raw)" "\033[31mERROR:\033[0m foo"
+  expect_eq "$(note foo)" '[GREEN]NOTE:  [OFF]foo[OFF]'
+  expect_eq "$(warn foo)" '[YELLOW]WARN:  [OFF]foo[OFF]'
+  expect_eq "$(error foo)" '[RED]ERROR: [OFF]foo[OFF]'
 }
 
 @test "tagsh" {
-  tagsh_raw() { tagsh "$@" | _raw; }
   foo() { echo foo; }
   bar() { echo 'bar  baz'; }
   TITLE_INFO=(foo bar)
 
-  expect_eq "$(tagsh_raw)" "\033]0;foo - bar  baz\007"
-  expect_eq "$(tagsh_raw tag)" "\033]0;foo - bar  baz - tag\007"
+  expect_eq "$(tagsh)" $'\033]0;foo - bar  baz\007'
+  expect_eq "$(tagsh tag)" $'\033]0;foo - bar  baz - tag\007'
   foo() { echo foobar; }
-  expect_eq "$(tagsh_raw)" "\033]0;foobar - bar  baz\007"
+  expect_eq "$(tagsh)" $'\033]0;foobar - bar  baz\007'
 }
 
 @test "short_pwd" {
@@ -96,40 +91,38 @@ color_raw() { color "$@" | _raw; }
 
 @test "hg_prompt" {
   type hg || skip
-  hg_prompt_raw() { hg_prompt "$@" | _raw; }
 
   # no repo
-  cd $(mktemp -d)
-  expect_eq "$(hg_prompt_raw)" ""
+  cd "$(mktemp -d)"
+  expect_eq "$(hg_prompt)" ""
 
   # new repo
   hg init
-  expect_eq "$(hg_prompt_raw)" "\[\033[32m\]default\[\033[0m\]"
+  expect_eq "$(hg_prompt)" '[pGREEN]default[pOFF]'
 
   # untracked file
   echo foo > foo.txt
-  expect_eq "$(hg_prompt_raw)" "\[\033[35m\]default\[\033[0m\]"
+  expect_eq "$(hg_prompt)" '[pPURPLE]default[pOFF]'
 
   # local mods
   hg addrem
-  expect_eq "$(hg_prompt_raw)" "\[\033[91m\]default\[\033[0m\]"
+  expect_eq "$(hg_prompt)" '[pLRED]default[pOFF]'
 
   # clean repo
   hg commit -m init -u foo
-  expect_eq "$(hg_prompt_raw)" "\[\033[32m\]default\[\033[0m\]"
+  expect_eq "$(hg_prompt)" '[pGREEN]default[pOFF]'
 
   # different branch
   hg branch foo
-  expect_eq "$(hg_prompt_raw)" "\[\033[32m\]foo\[\033[0m\]"
+  expect_eq "$(hg_prompt)" '[pGREEN]foo[pOFF]'
 }
 
 @test "git_prompt" {
   type git || skip
-  git_prompt_raw() { git_prompt "$@" | _raw; }
 
   # no repo
-  cd $(mktemp -d)
-  expect_eq "$(git_prompt_raw)" ""
+  cd "$(mktemp -d)"
+  expect_eq "$(git_prompt)" ""
 
   # new repo
   git init
@@ -137,25 +130,25 @@ color_raw() { color "$@" | _raw; }
   git config user.name foo
   echo foo > foo.txt
   git add .
-  expect_eq "$(git_prompt_raw)" ""
+  expect_eq "$(git_prompt)" ""
 
   # first commit
   git commit -m "init"
-  expect_eq "$(git_prompt_raw)" "\[\033[32m\]master\[\033[0m\]"
+  expect_eq "$(git_prompt)" '[pGREEN]master[pOFF]'
 
   # unstaged
   echo bar > foo.txt
-  expect_eq "$(git_prompt_raw)" "\[\033[31m\]master\[\033[0m\]"
+  expect_eq "$(git_prompt)" '[pRED]master[pOFF]'
 
   # staged
   git add .
-  expect_eq "$(git_prompt_raw)" "\[\033[33m\]master\[\033[0m\]"
+  expect_eq "$(git_prompt)" '[pYELLOW]master[pOFF]'
 
   # clean repo
   git commit -m "tweak file"
-  expect_eq "$(git_prompt_raw)" "\[\033[32m\]master\[\033[0m\]"
+  expect_eq "$(git_prompt)" '[pGREEN]master[pOFF]'
 
   # untracked file
   touch bar.txt
-  expect_eq "$(git_prompt_raw)" "\[\033[35m\]master\[\033[0m\]"
+  expect_eq "$(git_prompt)" '[pPURPLE]master[pOFF]'
 }
