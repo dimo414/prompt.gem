@@ -41,19 +41,8 @@ pg::_update_title() {
   if [[ -n "$_SHELL_TAG" ]]; then title_parts+=("$_SHELL_TAG"); fi
 
   printf -v title_info '%s - ' "${title_parts[@]}"
-  printf '\033]0;%s\007' "${title_info% - }"
+  printf '\033]0;%s%s\007' "${title_prefix:+"[${title_prefix}] "}" "${title_info% - }"
 }
-
-# Tags the shell tab correctly upon exiting an SSH session
-# TODO is this actually necessary anymore? _prompt_command calls tagsh every time
-if [[ "$(type -t ssh)" != "alias" ]]; then # don't create if user has an ssh alias
-ssh() {
-  command ssh "$@"
-  local ret=$?
-  pg::_update_title
-  return "$ret"
-}
-fi
 
 # Shortens pwd to a more readable format
 prompt::short_pwd() {
@@ -94,9 +83,11 @@ _prompt_command() { :; }
 
 # Invoked as (part of) the DEBUG trap, to record the time the user-invoked command is started.
 # http://stackoverflow.com/a/1862762/113632
+# Also updates the title with the running command
 prompt::_command_start() {
-  # Ignore while tab-completing or running _prompt_command
+  # Ignore while tab-completing or running prompt::_set_ps1
   if [[ -n "$COMP_LINE" ]] || [[ -n "$_BUILD_PROMPT" ]]; then return; fi
+  title_prefix="${BASH_COMMAND%% *}" pg::_update_title
   _PROMPT_COMMAND_START=${_PROMPT_COMMAND_START:-$SECONDS}
 }
 
