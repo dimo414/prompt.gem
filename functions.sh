@@ -41,6 +41,7 @@ pg::_update_title() {
   if [[ -n "$_SHELL_TAG" ]]; then title_parts+=("$_SHELL_TAG"); fi
 
   printf -v title_info '%s - ' "${title_parts[@]}"
+  # shellcheck disable=SC2154 # https://github.com/koalaman/shellcheck/issues/2053
   printf '\033]0;%s%s\007' "${title_prefix:+"[${title_prefix}] "}" "${title_info% - }"
 }
 
