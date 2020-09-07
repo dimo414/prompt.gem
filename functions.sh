@@ -88,14 +88,13 @@ prompt::_format_seconds() {
   echo "$output"
 }
 
-# TODO rename these prompt::_command_timing and prompt::_set_ps1
+# TODO delete these artifacts after Jan 2021
+_time_command() { :; }
+_prompt_command() { :; }
 
-# Records the time this method is called (relative to
-# the shell).  Combined with the DEBUG trap this records
-# when a terminal command starts.
-# 
+# Invoked as (part of) the DEBUG trap, to record the time the user-invoked command is started.
 # http://stackoverflow.com/a/1862762/113632
-_time_command() {
+prompt::_command_start() {
   # Ignore while tab-completing or running _prompt_command
   if [[ -n "$COMP_LINE" ]] || [[ -n "$_BUILD_PROMPT" ]]; then return; fi
   _PROMPT_COMMAND_START=${_PROMPT_COMMAND_START:-$SECONDS}
@@ -103,7 +102,7 @@ _time_command() {
 
 # Generates and sets PS1 and the window title
 # shellcheck disable=SC2155
-_prompt_command() {
+prompt::_set_ps1() {
   # capture the exit code first, since we'll overwrite it
   local exit_code=$?
   _BUILD_PROMPT=true
@@ -166,10 +165,9 @@ _prompt_command() {
   fi
   (( ${#env_parts[@]} == 0 )) || printf -v env ' %s' "${env_parts[@]}"
 
-  printf -v PS1 '\n[%s%s] [%s:%s%s]\n%s ' \
+  printf -v PS1 '\n[%s%s] [%s:%s%s]\n\\$ ' \
     "${runtime_display:+${runtime_display} }" "${exit_code_display}" \
-    "${machine}" "${pwd}" "${env}" \
-    '\$'
+    "${machine}" "${pwd}" "${env}"
 
   # Done building prompt - make sure this line is last
   unset _BUILD_PROMPT

@@ -25,10 +25,10 @@ COMMAND_FINISHED_CALLBACKS=()
 # Callback variables
 DISPLAY_COMMAND_FINISHED_DIALOG=30
 
-# Command execution times
-# Note this value is only used upon initially sourcing ProfileGem, not when running pgem_reload.
-CAPTURE_COMMAND_TIMES=true
-DISPLAY_COMMAND_TIME_THRESHOLD=5
+# Enable functionality that requires the DEBUG trap; ignored if bash-preexec is detected.
+# Note the debug trap is not updated when running pgem_reload, therefore it is neccessary to launch
+# a new shell if changing this value.
+OWN_DEBUG_TRAP=true
 
-# Support bash-preexec
-COMPATIBLE_WITH_PREEXEC=true
+# Command execution times
+DISPLAY_COMMAND_TIME_THRESHOLD=5

@@ -65,7 +65,7 @@ record how long commands take, overriding any previous trap you may have install
 this should cause no issues, but if other parts of your environment start behaving strangely you
 may need to disable this functionality because they expect *their* trap to be running.
 
-Set `CAPTURE_COMMAND_TIMES=false` in your `local.conf.sh` to do so.
+Set `OWN_DEBUG_TRAP=false` in your `local.conf.sh` to do so.
 
 ## Copyright and License
 
