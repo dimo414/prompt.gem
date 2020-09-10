@@ -45,10 +45,21 @@ pg::_update_title() {
   printf '\033]0;%s%s\007' "${title_prefix:+"[${title_prefix}] "}" "${title_info% - }"
 }
 
+prompt::_shorten() {
+  if (( $# == 1 )); then echo "$1"; return; fi
+  local value="${1:?}"; shift
+  sed -f <(printf '%s\n' "$@") <<<"$value"
+}
+
 # Shortens pwd to a more readable format
 prompt::short_pwd() {
-  if (( ${#HIDE_PATHS[@]} == 0 )); then echo "$PWD"; return; fi
-  sed -f <(printf '%s\n' "${HIDE_PATHS[@]}") <<<"$PWD"
+  prompt::_shorten "$PWD" "${HIDE_PATHS[@]}"
+}
+
+# Shortens hostname to a more readable format
+prompt::short_hostname() {
+  # Can swap to ${HOSTNAME^^} once we no longer support Bash 3
+  prompt::_shorten "$(tr '[:lower:]' '[:upper:]' <<<"$HOSTNAME")" "${HIDE_HOSTS[@]}"
 }
 
 # Given a directory name (like .hg or .git) look through the pwd for such a repo
@@ -62,20 +73,21 @@ prompt::_find_repo() {
 }
 
 # Given a number of seconds formats it as a human-readable string.
+# By default writes to $duration; pass a different variable name as $2 if needed.
 prompt::_format_seconds() {
-  local duration=$1
-  local output="$((duration % 60))s"
-  ((duration /= 60))
+  local _duration=$1 _var=${2:-duration}
+  local _output="$((_duration % 60))s"
+  ((_duration /= 60))
 
-  ((duration > 0)) && output="$((duration % 60))m $output"
-  ((duration /= 60))
+  ((_duration > 0)) && _output="$((_duration % 60))m $_output"
+  ((_duration /= 60))
 
-  ((duration > 0)) && output="$((duration % 24))h $output"
-  ((duration /= 24))
+  ((_duration > 0)) && _output="$((_duration % 24))h $_output"
+  ((_duration /= 24))
 
-  ((duration > 0)) && output="${duration}d $output"
+  ((_duration > 0)) && _output="${_duration}d $_output"
 
-  echo "$output"
+  printf -v "$_var" '%s' "$_output"
 }
 
 # TODO delete these artifacts after Jan 2021
@@ -112,7 +124,8 @@ prompt::_set_ps1() {
 
   # calling history appears to update the history file as a side-effect
   local last_command=$(HISTTIMEFORMAT='' history 1 | sed '1 s/^ *[0-9]\+[* ] //')
-  local formatted_runtime=$(prompt::_format_seconds "$runtime")
+  local formatted_runtime
+  prompt::_format_seconds "$runtime" formatted_runtime
 
   pg::_update_title
   for callback in "${COMMAND_FINISHED_CALLBACKS[@]}"; do

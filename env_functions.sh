@@ -8,6 +8,8 @@
 
 # Upper-case hostname, for title
 hostname_title() {
+  pg::err "hostname_title is deprecated, use prompt::short_hostname instead."
+  pg::trace "$@"
   tr '[:lower:]' '[:upper:]' <<<"$HOSTNAME"
 }
 

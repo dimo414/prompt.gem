@@ -77,10 +77,17 @@ expect_eq() {
 }
 
 @test "_format_seconds" {
-  expect_eq "$(prompt::_format_seconds 10)" "10s"
-  expect_eq "$(prompt::_format_seconds 100)" "1m 40s"
-  expect_eq "$(prompt::_format_seconds 10000)" "2h 46m 40s"
-  expect_eq "$(prompt::_format_seconds 100000)" "1d 3h 46m 40s"
+  prompt::_format_seconds 10 || true
+  expect_eq "$duration" "10s"
+  prompt::_format_seconds 100 || true
+  expect_eq "$duration" "1m 40s"
+  prompt::_format_seconds 10000 || true
+  expect_eq "$duration" "2h 46m 40s"
+  prompt::_format_seconds 100000 || true
+  expect_eq "$duration" "1d 3h 46m 40s"
+
+  prompt::_format_seconds 1000000 another_var || true
+  expect_eq "$another_var" "11d 13h 46m 40s"
 }
 
 # TODO add _prompt_command tests, possibly in a separate file

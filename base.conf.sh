@@ -11,12 +11,13 @@
 
 HOST_COLOR=NONE
 
-# sed replacements of the PWD, generally to shorten it for commonly-used paths
-HIDE_PATHS=()
-[[ -n "$HOME" ]] && HIDE_PATHS+=("s|^${HOME}|~|")
+# sed replacements of PWD, used by prompt::short_pwd to abbreviate commonly-used paths
+HIDE_PATHS=(${HOME:+"s|^${HOME}|~|"}) # only shorten HOME if set
+# sed replacements of HOSTNAME, used by prompt::short_hostname to abbreviate commonly-used hosts.
+HIDE_HOSTS=()
 
 # Callback functions used to construct the window title
-TITLE_INFO=(hostname_title)
+TITLE_INFO=(prompt::short_hostname)
 # Callback functions used to construct the prompt
 ENV_INFO=()
 # Callback functions invoked when a command has finished
