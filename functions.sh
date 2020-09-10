@@ -23,24 +23,13 @@ warn()  { pg::print YELLOW 'WARN:  ' OFF "$*"; }
 error() { pg::print RED    'ERROR: ' OFF "$*"; }
 
 # "Tags" this shell, updating the window title and prompt.
-# Tag is stored in _SHELL_TAG so the tag can be restored
-# after other different applications (e.g. ssh) overwrites it.
 tagsh() {
   _SHELL_TAG="$*"
-  pg::_update_title
 }
 
-pg::_update_title() {
-  local title_info title_cmd cmd_result title_parts=()
-
-  # shellcheck disable=SC2153
-  for title_cmd in "${TITLE_INFO[@]}"; do
-    cmd_result="$($title_cmd)"
-    if [[ -n "$cmd_result" ]]; then title_parts+=("$cmd_result"); fi
-  done
-  if [[ -n "$_SHELL_TAG" ]]; then title_parts+=("$_SHELL_TAG"); fi
-
-  printf -v title_info '%s - ' "${title_parts[@]}"
+prompt::_update_title() {
+  local title_info
+  printf -v title_info '%s - ' "${_TITLE_PARTS[@]}" ${_SHELL_TAG:+"$_SHELL_TAG"}
   # shellcheck disable=SC2154 # https://github.com/koalaman/shellcheck/issues/2053
   printf '\033]0;%s%s\007' "${title_prefix:+"[${title_prefix}] "}" "${title_info% - }"
 }
@@ -100,7 +89,7 @@ _prompt_command() { :; }
 prompt::_command_start() {
   # Ignore while tab-completing or running prompt::_set_ps1
   if [[ -n "$COMP_LINE" ]] || [[ -n "$_BUILD_PROMPT" ]]; then return; fi
-  title_prefix="${BASH_COMMAND%% *}" pg::_update_title
+  title_prefix="${BASH_COMMAND%% *}" prompt::_update_title
   _PROMPT_COMMAND_START=${_PROMPT_COMMAND_START:-$SECONDS}
 }
 
@@ -127,7 +116,6 @@ prompt::_set_ps1() {
   local formatted_runtime
   prompt::_format_seconds "$runtime" formatted_runtime
 
-  pg::_update_title
   for callback in "${COMMAND_FINISHED_CALLBACKS[@]}"; do
     # Trigger callbacks asynchronously and in the background; these callbacks
     # should not block the next prompt from being rendered.
@@ -158,10 +146,16 @@ prompt::_set_ps1() {
   pg::style -p LBLUE
   pwd="${_pg_style}$(prompt::short_pwd)${_pg_style_off}"
 
-  local env_cmd cmd_result env_parts=() env
+  local cmd cmd_result env_parts=() env
+  _TITLE_PARTS=() # not local
+  for cmd in "${TITLE_INFO[@]}"; do
+    cmd_result="$("$cmd")"
+    if [[ -n "$cmd_result" ]]; then _TITLE_PARTS+=("${cmd_result}"); fi
+  done
+  prompt::_update_title
   # shellcheck disable=SC2153
-  for env_cmd in "${ENV_INFO[@]}"; do
-    cmd_result="$($env_cmd)"
+  for cmd in "${ENV_INFO[@]}"; do
+    cmd_result="$("$cmd")"
     if [[ -n "$cmd_result" ]]; then env_parts+=("${cmd_result}"); fi
   done
   if [[ -n "${_SHELL_TAG}" ]]; then
