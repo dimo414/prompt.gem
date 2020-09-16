@@ -149,6 +149,7 @@ prompt::_set_ps1() {
 
   local cmd cmd_result env_parts=() env
   _TITLE_PARTS=() # not local
+  # shellcheck disable=SC2153
   for cmd in "${TITLE_INFO[@]}"; do
     cmd_result="$("$cmd")"
     if [[ -n "$cmd_result" ]]; then _TITLE_PARTS+=("${cmd_result}"); fi
