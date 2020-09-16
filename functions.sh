@@ -7,8 +7,10 @@
 
 # TODO delete these functions after March 2021
 color() {
-  pg::err "color function is deprecated, use pg::style instead"
-  pg::trace "$@"
+  if (( RANDOM % 100 == 0 )); then # reduce the number of warnings, so we don't totally flood a shell
+    pg::err "color function is deprecated, use pg::style instead"
+    pg::trace "$@"
+  fi
   local color format _pg_style
   color=$(tr '[:lower:]' '[:upper:]' <<<"${1:-OFF}")
   format=$(tr '[:lower:]' '[:upper:]' <<<"$2")
