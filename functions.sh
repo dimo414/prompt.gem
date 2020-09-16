@@ -5,9 +5,10 @@
 # Loaded after environment.sh and aliases.sh
 #
 
-# TODO add a deprecation warning
 # TODO delete these functions after March 2021
 color() {
+  pg::err "color function is deprecated, use pg::style instead"
+  pg::trace "$@"
   local color format _pg_style
   color=$(tr '[:lower:]' '[:upper:]' <<<"${1:-OFF}")
   format=$(tr '[:lower:]' '[:upper:]' <<<"$2")
@@ -31,7 +32,7 @@ prompt::_update_title() {
   local title_info
   printf -v title_info '%s - ' "${_TITLE_PARTS[@]}" ${_SHELL_TAG:+"$_SHELL_TAG"}
   # shellcheck disable=SC2154 # https://github.com/koalaman/shellcheck/issues/2053
-  printf '\033]0;%s%s\007' "${title_prefix:+"[${title_prefix}] "}" "${title_info% - }"
+  printf '\e]0;%s%s\a' "${title_prefix:+"[${title_prefix}] "}" "${title_info% - }"
 }
 
 prompt::_shorten() {
