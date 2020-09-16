@@ -42,14 +42,11 @@ expect_eq() {
 }
 
 @test "tagsh" {
-  foo() { echo foo; }
-  bar() { echo 'bar  baz'; }
-  TITLE_INFO=(foo bar)
-
-  expect_eq "$(tagsh)" $'\033]0;foo - bar  baz\007'
-  expect_eq "$(tagsh tag)" $'\033]0;foo - bar  baz - tag\007'
-  foo() { echo foobar; }
-  expect_eq "$(tagsh)" $'\033]0;foobar - bar  baz\007'
+  _TITLE_PARTS=(foo 'bar  baz')
+  expect_eq "$(prompt::_update_title)" $'\033]0;foo - bar  baz\a'
+  expect_eq "$(tagsh tag; prompt::_update_title)" $'\033]0;foo - bar  baz - tag\a'
+  _TITLE_PARTS[0]=foobar
+  expect_eq "$(title_prefix=bump; prompt::_update_title)" $'\033]0;[bump] foobar - bar  baz\a'
 }
 
 @test "short_pwd" {
