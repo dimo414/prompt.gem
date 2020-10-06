@@ -92,7 +92,8 @@ _prompt_command() { :; }
 prompt::_command_start() {
   # Ignore while tab-completing or running prompt::_set_ps1
   if [[ -n "$COMP_LINE" ]] || [[ -n "$_BUILD_PROMPT" ]]; then return; fi
-  title_prefix="${BASH_COMMAND%% *}" prompt::_update_title
+  local cmd="${BASH_COMMAND%% *}"
+  title_prefix="${cmd##*/}" prompt::_update_title
   _PROMPT_COMMAND_START=${_PROMPT_COMMAND_START:-$SECONDS}
 }
 
