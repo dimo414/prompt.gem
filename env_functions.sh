@@ -15,7 +15,13 @@ hostname_title() {
 
 # Prints the current time, in purple
 time_prompt() {
-  pg::print -p PURPLE "$(date +%I:%M:%S%p)"
+  local format_string=%I:%M:%S%p
+  # Occasionally include the date in the timestamp
+  # Is there a better approach to use here?
+  if (( RANDOM % 100 == 0 )); then
+    format_string="%F ${format_string}"
+    fi
+  pg::print -p PURPLE "$(date "+${format_string}")"
 }
 
 # Prints the current branch, colored by status, of a Mercurial repo
