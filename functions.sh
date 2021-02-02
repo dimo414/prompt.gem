@@ -109,7 +109,7 @@ prompt::_set_ps1() {
   unset _PROMPT_COMMAND_START
 
   local exit_color=GREEN
-  if (( exit_code > 127 && exit_code < 192 )); then # signals, 1-64
+  if (( exit_code > 128 && exit_code <= 128+64 )); then # signals, 1-64
     exit_color=PURPLE
   elif (( exit_code != 0 )); then
     exit_color=RED
