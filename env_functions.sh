@@ -29,8 +29,9 @@ hg_prompt() {
   local repo
   repo=$(prompt::_find_repo .hg) || return 0
   cd "$repo" || return # so Mercurial doesn't have to do the same find we just did
-  local branch num_heads heads
-  branch=$(hg branch 2> /dev/null) || return 0
+  local branch=default num_heads heads
+  # `hg branch` may be slow for large repos, read it from .hg/
+  [[ -f .hg/branch ]] && branch=$(<.hg/branch)
   num_heads=$(hg heads --template '{rev} ' 2> /dev/null | wc -w) || return 0
   if (( num_heads > 1 )); then
     heads='*'
