@@ -120,6 +120,7 @@ prompt::_set_ps1() {
   local formatted_runtime
   prompt::_format_seconds "$runtime" formatted_runtime
 
+  printf "$_PS1_POST_INIT_PREFIX"
   for callback in "${COMMAND_FINISHED_CALLBACKS[@]}"; do
     # Trigger callbacks asynchronously and in the background; these callbacks
     # should not block the next prompt from being rendered.
@@ -169,16 +170,16 @@ prompt::_set_ps1() {
   fi
   (( ${#env_parts[@]} == 0 )) || printf -v env ' %s' "${env_parts[@]}"
 
-  printf -v PS1 '\n[%s%s] [%s:%s%s]\n\\$ ' \
+  printf -v PS1 '[%s%s] [%s:%s%s]\n\\$ ' \
     "${runtime_display:+${runtime_display} }" "${exit_code_display}" \
     "${machine}" "${pwd}" "${env}"
 
   # Done building prompt - make sure this line is last
   unset _BUILD_PROMPT
+  _PS1_POST_INIT_PREFIX="\n"
 }
 
 # Include common functions users can add to ENV_INFO
 source env_functions.sh
 # Include common functions users can add to COMMAND_FINISHED_CALLBACKS
 source callback_functions.sh
-
