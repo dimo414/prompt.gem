@@ -21,7 +21,6 @@ e.g.
   one command from the next.
 * Tracks the duration of commands and displays the duration of long-running (>5s) commands.
 * Also updates the terminal's title, and provides the `tagsh` command to label the window.
-* Provides `color` and `pcolor` functions to easily colorize your prompt and commands.
 * Comes with several optional helper functions you can enable to add additional functionality
   to your prompt, such as the status of your current Mercurial or Git repo. See
   [`env_functions.sh`](https://github.com/dimo414/prompt.gem/blob/master/env_functions.sh)

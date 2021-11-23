@@ -5,25 +5,11 @@
 # Loaded after environment.sh and aliases.sh
 #
 
-# TODO delete these functions after March 2021
-color() {
-  if (( RANDOM % 100 == 0 )); then # reduce the number of warnings, so we don't totally flood a shell
-    pg::err "color function is deprecated, use pg::style instead"
-    pg::trace "$@"
-  fi
-  local color format _pg_style
-  color=$(tr '[:lower:]' '[:upper:]' <<<"${1:-OFF}")
-  format=$(tr '[:lower:]' '[:upper:]' <<<"$2")
-  pg::style "${color}${format:+:${format}}"
-  printf '%s' "$_pg_style"
-}
-pcolor() { printf '\[%s\]' "$(color "$@")"; }
-
 # Log-style functions with colored output
-# TODO these are not really very useful, delete?
-note()  { pg::print GREEN  'NOTE:  ' OFF "$*"; }
-warn()  { pg::print YELLOW 'WARN:  ' OFF "$*"; }
-error() { pg::print RED    'ERROR: ' OFF "$*"; }
+# TODO these are not really very useful, delete after Feb 2022
+note()  { pg::err "note function is deprecated, use pg::print instead";  pg::print GREEN  'NOTE:  ' OFF "$*"; }
+warn()  { pg::err "warn function is deprecated, use pg::print instead";  pg::print YELLOW 'WARN:  ' OFF "$*"; }
+error() { pg::err "error function is deprecated, use pg::print instead"; pg::print RED    'ERROR: ' OFF "$*"; }
 
 # "Tags" this shell, updating the window title and prompt.
 tagsh() {
@@ -81,10 +67,6 @@ prompt::_format_seconds() {
 
   printf -v "$_var" '%s' "$_output"
 }
-
-# TODO delete these artifacts after Jan 2021
-_time_command() { :; }
-_prompt_command() { :; }
 
 # Invoked as (part of) the DEBUG trap, to record the time the user-invoked command is started.
 # http://stackoverflow.com/a/1862762/113632

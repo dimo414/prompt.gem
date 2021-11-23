@@ -17,30 +17,6 @@ expect_eq() {
   fi
 }
 
-@test "named colors" {
-  expect_eq "$(color red)foo$(color)" '[RED]foo[OFF]'
-  expect_eq "$(color green)foo$(color cyan)bar$(color none)" '[GREEN]foo[CYAN]bar[NONE]'
-}
-
-@test "numbered colors" {
-  expect_eq "$(color 202)foo" '[202]foo'
-  expect_eq "$(color '255;150;00')foo" '[255;150;00]foo'
-}
-
-@test "styles" {
-  expect_eq "$(color red blink)foo" '[RED:BLINK]foo'
-}
-
-@test "pcolor" {
-  expect_eq "$(pcolor yellow)foo$(pcolor)" '\[[YELLOW]\]foo\[[OFF]\]'
-}
-
-@test "logging utils" {
-  expect_eq "$(note foo)" '[GREEN]NOTE:  [OFF]foo[OFF]'
-  expect_eq "$(warn foo)" '[YELLOW]WARN:  [OFF]foo[OFF]'
-  expect_eq "$(error foo)" '[RED]ERROR: [OFF]foo[OFF]'
-}
-
 @test "tagsh" {
   _TITLE_PARTS=(foo 'bar  baz')
   expect_eq "$(prompt::_update_title)" $'\033]0;foo - bar  baz\a'
